@@ -1,3 +1,5 @@
+![License](https://img.shields.io/badge/license-MIT-green)
+
 # Hist-Tree
 
 An efficient Hist-Tree for managing time-based data. This data structure allows tracking changes to data over time and querying historical values, while maintaining efficiency in terms of storage and query speed.
