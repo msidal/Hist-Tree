@@ -35,7 +35,7 @@ public:
     void print() const;
 
     size_t getSize() const {
-        return sizeof(*this) + inner_nodes.size() * sizeof(unsigned) + leaf_nodes.size() * sizeof(unsigned);
+        return sizeof(*this) + inner_nodes_.size() * sizeof(unsigned) + leaf_nodes_.size() * sizeof(unsigned);
     }
 
 private:

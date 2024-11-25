@@ -11,7 +11,7 @@
 template <typename KeyType>
 class Builder {
     public:
-        Builder(KeyType min_key, KeyType max_key, size_t num_bins, size_t max_error);
+        Builder(KeyType min_key, KeyType max_key, size_t num_bins, size_t max_error); // TODO: add single_pass and use_cache
 
         void insert(KeyType key);
 
@@ -52,6 +52,9 @@ class Builder {
         constexpr int32_t clearHighOrderBit(int32_t value) {
             return value & ~(1 << 31);
         }
+
+        void prepareTree();
+        void prune();
 
         const KeyType min_key_;
         const KeyType max_key_;
