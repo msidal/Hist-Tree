@@ -1,0 +1,142 @@
+
+rekursiver Ansatz:
+void buildTreeRecursively(std::vector<std::vector<uint32_t>>& bins, size_t parent_index, size_t bin_index) {
+            // 1. calculate the counts for each bin and check if the node is a leaf
+            std::vector<size_t> counts = countBinElements(bins);
+            bool is_leaf = false;
+
+            for (size_t i = 0; i < num_bins_; ++i) {
+                if (counts[i] >= max_error_) {
+                    is_leaf = true;
+                    break;
+                }
+            }
+
+
+            if (is_leaf) {
+                // 2. leaf_node: store the counts in the leaf node array
+                size_t leaf_index = leaf_nodes_.size(); // next free position in the Leaf-Array
+                leaf_nodes_.insert(leaf_nodes_.end(), counts.begin(), counts.end());
+                //TODO if necessary?
+                inner_nodes_[parent_index + num_bins_ + bin_index] = setHighOrderBit(static_cast<uint32_t>(leaf_index));
+                
+                return;
+            }
+
+            // 3. inner_node: store the inner node in the inner node array
+        }
+
+32 bit Blöcke version:
+
+// only works for 32-bit integers 
+        // g++ -O2 -mavx2 -mfma -std=c++17 -o simd_example main.cpp
+        std::vector<uint32_t> createBitVectorSIMD(const std::vector<uint32_t>& keys) {
+            size_t bit_length = (range_ + 31) / 32; // amount of 32-bit blocks
+            std::vector<uint32_t> bit_vector(bit_length, 0);
+
+            // SIMD-specific parameters
+            const size_t SIMD_WIDTH = 8; // amount of parallel processing (256-bit / 32-bit = 8)
+            __m256i vec_min_value = _mm256_set1_epi32(min_key_); // SIMD-vector for min_value
+
+            size_t i = 0;
+            for (; i + SIMD_WIDTH <= keys.size(); i += SIMD_WIDTH) {
+                // load 8 keys into a SIMD register
+                __m256i vec_keys = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(&keys[i]));
+
+                // subtract min_value from each key
+                __m256i vec_offsets = _mm256_sub_epi32(vec_keys, vec_min_value);
+
+                // block_index = offsets / 32
+                __m256i vec_block_index = _mm256_srli_epi32(vec_offsets, 5); // division by 32 by right shift: 2⁵
+
+                // bit_offset = offsets % 32
+                __m256i vec_bit_offset = _mm256_and_si256(vec_offsets, _mm256_set1_epi32(31)); // modulo 32 with mask
+
+                // save SIMD registers in arrays
+                alignas(32) int block_indices[SIMD_WIDTH];
+                alignas(32) int bit_offsets[SIMD_WIDTH];
+
+                _mm256_storeu_si256(reinterpret_cast<__m256i*>(block_indices), vec_block_index);
+                _mm256_storeu_si256(reinterpret_cast<__m256i*>(bit_offsets), vec_bit_offset);
+
+                // set the bits in the bit vector
+                for (int j = 0; j < SIMD_WIDTH; ++j) {
+                    if (block_indices[j] < static_cast<int>(bit_vector.size())) {
+                        bit_vector[block_indices[j]] |= (1 << bit_offsets[j]);
+                    }
+                }
+            }
+
+            // remaining keys (if keys.size() is not divisible by SIMD_WIDTH)
+            for (; i < keys.size(); ++i) {
+                int index = keys[i] - min_key_;
+                if (index >= 0 && static_cast<size_t>(index) < range_) {
+                    bit_vector[index / 32] |= (1 << (index % 32));
+                }
+            }
+
+            return bit_vector;
+        }
+
+        std::vector<u_int32_t> countBinElements(const std::vector<std::vector<uint32_t>>& bins) {
+            std::vector<uint32_t> counts(num_bins_);
+
+            for (size_t i = 0; i < num_bins_; ++i) {
+                counts[i] = std::accumulate(
+                    bins[i].begin(),
+                    bins[i].end(),
+                    0,  // Initialwert
+                    [](size_t acc, uint32_t block) {
+                        return acc + __builtin_popcount(block); 
+                    }
+                );
+            }
+
+            return counts;
+        }
+
+        // create a bit vector from the keys
+        std::vector<uint32_t> createBitVector(const std::vector<KeyType>& keys) {
+            size_t bit_length = (range_ + 31) / 32;
+            std::vector<uint32_t> bit_vector(bit_length, 0);
+
+            for (auto key : keys) {
+                int offset = key - min_key_;
+                bit_vector[offset / 32] |= (1 << (offset % 32));
+            }
+
+            return bit_vector;
+        }
+
+        
+
+        // partition the bit vector into bins
+        std::vector<std::vector<uint32_t>> partitionBitVector(const std::vector<uint32_t>& bit_vector, size_t num_bins) {
+            // calculate the total number of bits
+            size_t total_bits = bit_vector.size() * 32;
+
+            // calculate how many bits per bin
+            size_t bits_per_bin = (total_bits + num_bins - 1) / num_bins;
+
+            std::vector<std::vector<uint32_t>> bins(num_bins);
+
+            size_t current_bit = 0;
+            size_t bin_index = 0;
+
+            // go through each block in the bit vector
+            for (size_t block_index = 0; block_index < bit_vector.size(); ++block_index) {
+                uint32_t block = bit_vector[block_index];
+                
+                // determine the bin for this block
+                while (current_bit >= (bin_index + 1) * bits_per_bin) {
+                    ++bin_index;
+                }
+                
+                // add the block to the bin
+                bins[bin_index].push_back(block);
+                
+                current_bit += 32; // move to the next block
+            }
+
+            return bins;
+        }

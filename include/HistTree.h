@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <queue>
 #include <memory>
+#include <iostream>
 
 #include <common.h>
 
@@ -16,36 +17,56 @@ public:
 
     HistTree(KeyType min_key, KeyType max_key, size_t num_keys, size_t num_bins, 
             size_t log_num_bins, size_t max_error, size_t shift, 
-            std::vector<unsigned> inner_nodes, std::vector<unsigned> leaf_nodes);
+            std::vector<uint32_t> inner_nodes, std::vector<uint32_t> leaf_nodes) :
+            min_key_(min_key),
+            max_key_(max_key),
+            num_keys_(num_keys),
+            num_bins_(num_bins),
+            log_num_bins_(log_num_bins),
+            max_error_(max_error),
+            shift_(shift),
+            inner_nodes_(std::move(inner_nodes)),
+            leaf_nodes_(std::move(leaf_nodes)) {};
 
-    SearchBound getSearchBound( const KeyType key) const;
+    SearchBound getSearchBound( const KeyType key) const {
+        return {0, 0};
+    }
 
-    size_t lookup(KeyType key) const;
+    size_t lookup(KeyType key) const {
+        return 0;
+    }
 
-    void insert(KeyType key, size_t value);
+    void insert(KeyType key) {
 
-    void remove(KeyType key, size_t value);
+    }
 
-    void update(KeyType key, size_t old_value, size_t new_value);
+    void remove(KeyType key) {
+
+    }
 
     bool isEmpty() const {
-        return num_keys_ == 0;
+        return num_keys_ == 0; 
     }
 
-    void print() const;
+    void print() const {
+        
+    };
 
     size_t getSize() const {
-        return sizeof(*this) + inner_nodes_.size() * sizeof(unsigned) + leaf_nodes_.size() * sizeof(unsigned);
+        return sizeof(*this) + inner_nodes_.size() * sizeof(uint32_t) + leaf_nodes_.size() * sizeof(uint32_t);
     }
 
-private:
+private: 
+    static constexpr unsigned Leaf = (1u << 31);
+    static constexpr unsigned Mask = Leaf - 1;
+
     KeyType min_key_;
     KeyType max_key_;
     size_t num_keys_;
-    size_t num_bins_;
-    size_t log_num_bins_;
-    size_t max_error_;
-    size_t shift_;
+    const size_t num_bins_;
+    const size_t log_num_bins_;
+    const size_t max_error_;
+    const size_t shift_;
 
     //physical layout of the tree
     std::vector<uint32_t> inner_nodes_;
