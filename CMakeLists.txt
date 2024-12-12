@@ -24,11 +24,11 @@ FetchContent_MakeAvailable(googletest)
 # include directories
 include_directories(include)
 
-# source files
-file(GLOB SOURCES src/*.cpp)
+# source files if necessary
+# file(GLOB SOURCES src/*.cpp)
 
 # define executable
-add_executable(hist-tree main.cpp ${SOURCES})
+add_executable(hist-tree main.cpp) # ${SOURCES})
 
 # Tests
 enable_testing()
@@ -37,12 +37,24 @@ add_executable(
   builder_test
   test/builder_test.cpp
 )
+
 target_link_libraries(
   builder_test
   GTest::gtest_main
 )
 
+add_executable(
+  histtree_test
+  test/histtree_test.cpp
+)
+
+target_link_libraries(
+  histtree_test
+  GTest::gtest_main
+)
+
 include(GoogleTest)
 gtest_discover_tests(builder_test)
+gtest_discover_tests(histtree_test)
 
 

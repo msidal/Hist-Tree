@@ -1,14 +1,14 @@
 #pragma once
 
+
 #include <vector>
 #include <immintrin.h>
 #include <cassert>
 #include <cmath>
-#include <limits>
-#include <numeric>
 #include <iostream>
+#include <numeric>
+#include <queue>
 
-#include "common.h"
 #include "HistTree.h"
 
 
@@ -22,22 +22,26 @@ class Builder {
             num_keys_(keys.size()),
             keys_(std::move(keys)) {
 
-            assert(keys_.size() > 0);
+            assert(keys_.size() > 0 && "keys should not be empty");
+            assert(num_bins_ <= num_keys_ && "num_bins should not be greater than num_keys");
 
-            // Initialisierung von min_key_ und max_key_ nach der Überprüfung
             min_key_ = keys_.front();
             max_key_ = keys_.back();
             assert(min_key_ < max_key_);
+            assert((num_bins_ & (num_bins_ - 1)) == 0 && "num_bins should be a power of 2"); 
+            assert(num_bins_ > 1 && "num_bins should be greater than 1");
+            assert(max_error_ > 1 && "max_error should be greater than 1");
 
-            // Weitere Überprüfungen
-            assert((num_bins_ & (num_bins_ - 1)) == 0); // Prüft, ob num_bins eine Potenz von 2 ist
-            assert(num_bins_ > 1);
-            assert(max_error_ > 1);
-
-            // Berechnung von shift_ und range_
-            shift_ = computeLog(num_bins_);
-            range_ = 1 << static_cast<unsigned>(std::ceil(std::log2(max_key_ - min_key_)));
+            // calculate the range and shift
+            auto log_range_ = computeLog(max_key_ - min_key_, true);
+            assert(log_range_ >= log_num_bins_ && "range should be greater than log_num_bins");
+            shift_ = log_range_ - log_num_bins_;
+            range_ = 1 << log_range_;
+            
         }
+
+        
+        friend class BuilderTest;
 
         HistTree<KeyType> build() {
             // subject to change
@@ -45,8 +49,8 @@ class Builder {
             size_t estimated_inner_size = ((num_keys_ / max_error_) * (estimated_max_depth + 1) - 1) << log_num_bins_ << 2;
             size_t estimated_leaf_size = static_cast<size_t>(std::pow(num_bins_, estimated_max_depth));
 
-            inner_nodes_.resize(estimated_inner_size, 0);
-            leaf_nodes_.resize(estimated_leaf_size, 0);
+            inner_nodes_.resize(10000000, 0);
+            leaf_nodes_.resize(10000000, 0);
 
             auto bit_vector = createBitVector(keys_);
             auto bins = partitionVector(bit_vector); 
@@ -112,9 +116,10 @@ class Builder {
             inner_nodes_.shrink_to_fit();      
             leaf_nodes_.shrink_to_fit();
 
-            return HistTree<KeyType>(min_key_, max_key_, num_keys_, num_bins_, log_num_bins_, max_error_, shift_, inner_nodes_, leaf_nodes_);
+            return HistTree<KeyType>(min_key_, max_key_, num_keys_, num_bins_, log_num_bins_, max_error_, shift_, range_, inner_nodes_, leaf_nodes_);
         }
 
+        // subject to deletion
         void printVectors() const {
             std::cout << "Inner Nodes: ";
             for (auto node : inner_nodes_) {
@@ -129,7 +134,11 @@ class Builder {
             std::cout << std::endl;
         }
 
-    private:
+    #ifdef TESTING
+        public:  
+    #else
+        private: 
+    #endif
         // count set bits in all bins
         std::vector<uint32_t> countBinElements(const std::vector<std::vector<bool>>& bins) {
             std::vector<uint32_t> counts(num_bins_);
@@ -207,7 +216,7 @@ class Builder {
             return bit_vector;
         }
 
-         // helper functions for computing the log base 2 of a number
+        // helper functions for computing the log base 2 of a number
         static unsigned computeLog(uint32_t n, bool round = false) {
             assert(n);
             return 31 - __builtin_clz(n) + (round ? ((n & (n - 1)) != 0) : 0);
