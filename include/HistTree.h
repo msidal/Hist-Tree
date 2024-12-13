@@ -35,10 +35,13 @@ public:
             std::cerr << e.what() << std::endl;
             return SearchBound{0, 0};
         }
-        // `end` is exclusive.
+
+        // If the end of the range is greater than the number of keys
         const size_t end = (begin + max_error_ + 1 > num_keys_)
                             ? num_keys_
                             : (begin + max_error_ + 1);
+
+        // `end` is exclusive                            
         return SearchBound{begin, end};
     }
 
@@ -47,15 +50,20 @@ public:
         if (key < min_key_) return 0;
         if (key > max_key_) throw std::out_of_range("key out of range");
         
+        size_t i, bin, pos = 0;
+
         // if root is a leaf node
         if (inner_nodes_.empty()) {
-            
+            bin = key >> shift_;
+            for(i = 0; i < bin; i++) {
+                pos += leaf_nodes_[i];
+            }
+            return pos;
         }
 
         uint32_t next, *node = const_cast<uint32_t*>(inner_nodes_.data());
         bool done = false;
         size_t width = shift_;
-        size_t i, bin, pos = 0;
         key -= min_key_;
 
         do {
@@ -77,10 +85,12 @@ public:
         } while (1);
     }
 
+    //TODO I also need to update the keys 
     void insert(KeyType key) {
 
     }
 
+    // TODO I also need to update the keys
     void remove(KeyType key) {
 
     }
@@ -89,9 +99,24 @@ public:
         return num_keys_ == 0;
     }
 
-    void print() const {
-        
+    void visualize() const {
+        Visualize visualize(inner_nodes_, leaf_nodes_, num_bins_, max_error_);
+        visualize.exportToGraphviz("hist_tree.dot");
     };
+
+    void printVectors() const {
+        std::cout << "Inner Nodes: ";
+        for (const auto& node : inner_nodes_) {
+            std::cout << node << " ";
+        }
+        std::cout << std::endl;
+
+        std::cout << "Leaf Nodes: ";
+        for (const auto& node : leaf_nodes_) {
+            std::cout << node << " ";
+        }
+        std::cout << std::endl;
+    }
 
     size_t getSize() const {
         return sizeof(*this) + inner_nodes_.size() * sizeof(uint32_t) + leaf_nodes_.size() * sizeof(uint32_t);
