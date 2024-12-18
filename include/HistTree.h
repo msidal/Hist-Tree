@@ -15,7 +15,8 @@ public:
 
     HistTree(KeyType min_key, KeyType max_key, size_t num_keys, size_t num_bins, 
             size_t log_num_bins, size_t max_error, size_t shift, size_t range,
-            std::vector<uint32_t> inner_nodes, std::vector<uint32_t> leaf_nodes) :
+            std::vector<uint32_t> inner_nodes, std::vector<uint32_t> leaf_nodes,
+            std::vector<KeyType> keys)   :
             min_key_(min_key),
             max_key_(max_key),
             num_keys_(num_keys),
@@ -23,9 +24,9 @@ public:
             log_num_bins_(log_num_bins),
             max_error_(max_error),
             shift_(shift),
-            range_(range),
             inner_nodes_(std::move(inner_nodes)),
-            leaf_nodes_(std::move(leaf_nodes)) {};
+            leaf_nodes_(std::move(leaf_nodes)),
+            keys_(std::move(keys)) {};
 
     SearchBound getSearchBound( const KeyType key) const {
         size_t begin = 0;
@@ -51,6 +52,7 @@ public:
         if (key > max_key_) throw std::out_of_range("key out of range");
         
         size_t i, bin, pos = 0;
+        key -= min_key_;
 
         // if root is a leaf node
         if (inner_nodes_.empty()) {
@@ -64,7 +66,6 @@ public:
         uint32_t next, *node = const_cast<uint32_t*>(inner_nodes_.data());
         bool done = false;
         size_t width = shift_;
-        key -= min_key_;
 
         do {
             bin = key >> width;
@@ -85,14 +86,62 @@ public:
         } while (1);
     }
 
-    //TODO I also need to update the keys 
-    void insert(KeyType key) {
-
+    //TODO for the next three: I also need to update the keys, check if it is already in the tree, update min max
+    bool insert(KeyType key) {
+        return false;
     }
 
-    // TODO I also need to update the keys
-    void remove(KeyType key) {
 
+    //TODO is there a better way to do this?
+    std::vector<bool> bulkInsert(const std::vector<KeyType>& keys) {
+        std::vector<bool> success(keys.size(), true);
+        for (const auto& key : keys) {
+            success.push_back(insert(key));
+        }
+        return success;        
+    }
+
+    // TODO is it better to just build a new tree?
+    bool remove(KeyType key) {
+        // check if key is in range
+        if (key < min_key_ || key > max_key_) return false;
+        // check if tree is empty or key is not in the tree
+        if (num_keys_ == 0 || keys_.count(key) == 0) return false;
+
+        // remove key from keys
+        keys_.erase(key);
+        num_keys_--;
+
+        size_t i, bin = 0;
+        key -= min_key_;
+
+        // if root is a leaf node
+        if (inner_nodes_.empty()) {
+            bin = key >> shift_;
+            leaf_nodes_[bin]--;
+            return true;
+        }
+
+        // traverse the tree
+        uint32_t next, *node = inner_nodes_.data();
+        size_t width = shift_;
+        bool still_inner = false;
+
+        /*
+        do {
+            bin = key >> width;
+            node[bin]--;
+
+            if (node[num_bins_ + bin] == Terminal) return true;
+
+            for (i = 0; i < num_bins_; i++) {
+                if(node[i] > max_error_) still_inner = true;
+            }
+        } while (1);
+        */
+        
+
+        return true;
     }
 
     bool isEmpty() const {
@@ -100,26 +149,34 @@ public:
     }
 
     void visualize() const {
-        Visualize visualize(inner_nodes_, leaf_nodes_, num_bins_, max_error_);
+        Visualize visualize(inner_nodes_, leaf_nodes_, num_bins_);
         visualize.exportToGraphviz("hist_tree.dot");
     };
 
+    // subject to deletion
     void printVectors() const {
-        std::cout << "Inner Nodes: ";
+        char esc_char = 27;
+        std::cout << esc_char << "[1m"  << "Inner Nodes: " << esc_char << "[0m";
         for (const auto& node : inner_nodes_) {
             std::cout << node << " ";
         }
         std::cout << std::endl;
 
-        std::cout << "Leaf Nodes: ";
+        std::cout << esc_char << "[1m"  << "Leaf Nodes: " << esc_char << "[0m";
         for (const auto& node : leaf_nodes_) {
             std::cout << node << " ";
         }
         std::cout << std::endl;
     }
-
+ 
     size_t getSize() const {
         return sizeof(*this) + inner_nodes_.size() * sizeof(uint32_t) + leaf_nodes_.size() * sizeof(uint32_t);
+    }
+
+    //TODO remove gaps in the vectors after a remove
+    void optimize() {
+        inner_nodes_.shrink_to_fit();
+        leaf_nodes_.shrink_to_fit();
     }
 
 #ifdef TESTING
@@ -153,12 +210,12 @@ public:
         return 63 - __builtin_clzl(n) + (round ? ((n & (n - 1)) != 0) : 0);
     }
 
-
+    // for inserts and removes
+    std::vector<KeyType> keys_;
 
     KeyType min_key_;
     KeyType max_key_;
     size_t num_keys_;
-    const size_t range_;
     const size_t num_bins_;
     const size_t log_num_bins_;
     const size_t max_error_;
@@ -167,4 +224,5 @@ public:
     // physical layout of the tree
     std::vector<uint32_t> inner_nodes_;
     std::vector<uint32_t> leaf_nodes_;
+
 };

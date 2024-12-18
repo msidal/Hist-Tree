@@ -46,11 +46,11 @@ class Builder {
         HistTree<KeyType> build() {
             // subject to change
             size_t estimated_max_depth = static_cast<size_t>(std::ceil(std::log(static_cast<double>(num_keys_) / max_error_) / std::log(num_bins_)));
-            size_t estimated_inner_size = ((num_keys_ / max_error_) * (estimated_max_depth + 1) - 1) << log_num_bins_ << 2;
-            size_t estimated_leaf_size = static_cast<size_t>(std::pow(num_bins_, estimated_max_depth));
+            size_t estimated_inner_size = ((num_keys_ / max_error_) * (estimated_max_depth + 1) - 1) << (log_num_bins_ + 1);
+            size_t estimated_leaf_size = static_cast<size_t>(std::pow(num_bins_, estimated_max_depth)) << log_num_bins_;
 
-            inner_nodes_.resize(10000000, 0);
-            leaf_nodes_.resize(10000000, 0);
+            inner_nodes_.resize(estimated_inner_size, 0);
+            leaf_nodes_.resize(estimated_leaf_size, 0);
 
             auto bit_vector = createBitVector(keys_);
             auto bins = partitionVector(bit_vector); 
@@ -116,7 +116,7 @@ class Builder {
             inner_nodes_.shrink_to_fit();      
             leaf_nodes_.shrink_to_fit();
 
-            return HistTree<KeyType>(min_key_, max_key_, num_keys_, num_bins_, log_num_bins_, max_error_, shift_, range_, inner_nodes_, leaf_nodes_);
+            return HistTree<KeyType>(min_key_, max_key_, num_keys_, num_bins_, log_num_bins_, max_error_, shift_, range_, inner_nodes_, leaf_nodes_, keys_);
         }
 
         // subject to deletion
@@ -133,6 +133,8 @@ class Builder {
             }
             std::cout << std::endl;
         }
+
+        //HistTree<KeyType> recursiveBuild ();
 
     #ifdef TESTING
         public:  

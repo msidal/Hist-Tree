@@ -19,12 +19,10 @@ class Visualize {
 public:
     Visualize(const std::vector<uint32_t>& inner_nodes, 
               const std::vector<uint32_t>& leaf_nodes, 
-              size_t num_bins,
-              size_t max_error) 
+              size_t num_bins) 
         : inner_nodes_(inner_nodes), 
           leaf_nodes_(leaf_nodes), 
-          num_bins_(num_bins),
-          max_error_(max_error) {}
+          num_bins_(num_bins) {}
 
     // creates a folder "graphs" and a file "filename" in it
     static void createGraphsFolderAndFile(const std::string& filename) {
@@ -72,7 +70,6 @@ public:
         out << "  rankdir=TB;\n"; // top to bottom
         out << "  ranksep=1.0;\n";
         out << "  nodesep=0.5;\n";
-        out << "  size=\"12,24\";\n";
 
         // start with the root node
         if (!inner_nodes_.empty()) {
@@ -164,6 +161,5 @@ private:
     const std::vector<uint32_t>& inner_nodes_;
     const std::vector<uint32_t>& leaf_nodes_;
     size_t num_bins_;
-    size_t max_error_;
 };
 

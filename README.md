@@ -2,7 +2,7 @@
 
 # Hist-Tree
 
-An efficient Hist-Tree for managing time-based data. This data structure allows tracking changes to data over time and querying historical values, while maintaining efficiency in terms of storage and query speed.
+Hist-Tree [[1]](#1) is an efficient index competing with state-of-the-art Learned Indexes. It is based on the idea of using a Histogram to partition the data and then using a tree structure to navigate through the partitions. 
 
 ## Features
 
@@ -10,26 +10,27 @@ An efficient Hist-Tree for managing time-based data. This data structure allows 
 - 
 ## Installation & Usage
 
-Clone the repository and build the project on your machine:
+Clone the repository and run the project on your machine:
 
 ```bash
 git clone https://github.com/msidal/hist-tree.git
 cd hist-tree
 sudo apt install graphviz
-# Build the project depending on your language/build tool
-# Example for C++:
-mkdir build && cd build
-cmake ..
-make
-# run main.cpp example:
-./hist-tree
-# run tests
-ctest
+chmod +x run.sh
+./run.sh
 ```
 
-Visualize the Hist-Tree with Graphviz:
+The Tree will automatically be visualized via Graphviz in the folder "graphs".
 
-**TODO**
+Run the tests:
 
+```bash
+chmod +x test.sh
+./test.sh
+```
 
-
+## References
+<a id="1">[1]</a> 
+Andrew Crotty (2021). 
+Hist-Tree: Those Who Ignore It Are Doomed to Learn. 
+Conference on Innovative Data Systems Research. [Paper](https://api.semanticscholar.org/CorpusID:231400989)

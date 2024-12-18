@@ -9,6 +9,8 @@
 
 #include "Builder.h"
 
+char esc_char = 27;
+
 
 int main() {
      std::vector<uint32_t> keys;
@@ -17,19 +19,23 @@ int main() {
     std::mt19937 gen(rd()); // seed the generator
     std::uniform_int_distribution<> distr(0, 1000); // define the range
 
-    for(int n=0; n<200; n++) {
+    size_t num_keys = 200;
+
+    std::cout << "Generating " << num_keys << " random keys..." << std::endl;
+
+    for(int n=0; n<num_keys; n++) {
         //check if the key is already in the vector
         uint32_t key = distr(gen);
         if (std::find(keys.begin(), keys.end(), key) != keys.end()) {
             n--;
             continue;
         }
-        keys.push_back(key);   
+        keys.push_back(key);  
     }
 
     stable_sort(keys.begin(), keys.end());
 
-    std::cout << "Keys: ";
+    std::cout << esc_char << "[1m" << "The Keys: " << esc_char << "[0m";
     // print the sorted vector
     for (auto i : keys) {
         std::cout << i << " ";
@@ -45,17 +51,25 @@ int main() {
     HistTree<uint32_t> hist_tree = builder.build();
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-    std::cout << "\nTime: " << duration.count() << " microseconds" << std::endl;
+    std::cout << std::endl << esc_char << "[1m" << "Time: " << esc_char << "[0m" << duration.count() << " microseconds" << std::endl;
     
-    builder.printVectors();
+    hist_tree.printVectors();
 
     hist_tree.visualize();
 
-    std::cout << "Input the key you want to search for: ";
-    uint32_t cli_input = 0;
-    std::cin >> cli_input;
-    SearchBound sb = hist_tree.getSearchBound(cli_input);
-    std::cout << "Search Bound: " << sb.start << " " << sb.end << std::endl;
+    // make it interactive for the user to search for a key and quit with q
+
+    std::cout << esc_char << "[1m" << "Input the key you want to search for or quit with q: " << esc_char << "[0m";
+    std::string input;
+    while (std::cin >> input) {
+        if (input == "q") {
+            break;
+        }
+        uint32_t key = std::stoi(input);
+        SearchBound sb = hist_tree.getSearchBound(key);
+        std::cout << esc_char << "[1m" << "Search Bound: " << esc_char << "[0m" << sb.start << " - " << sb.end << std::endl;
+        std::cout << esc_char << "[1m" << "Input the key you want to search for or quit with q: " << esc_char << "[0m";
+    }
 
 
     
