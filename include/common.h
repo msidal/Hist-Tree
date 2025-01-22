@@ -72,9 +72,16 @@ public:
         out << "  nodesep=0.5;\n";
 
         // start with the root node
-        if (!inner_nodes_.empty()) {
+        
+        if (inner_nodes_.empty()) {
+            std::string label = "";
+            for (size_t i = 0; i < num_bins_; ++i) {
+                label += std::to_string(leaf_nodes_[i]) + (i < num_bins_ - 1 ? "|" : "");
+            }
+            out << "  root [label=\"" << label << "\", shape=record];\n";
+        } else {
             exportNode(out, 0, true);
-        }
+        } 
 
         out << "}\n";
         out.close();
@@ -104,7 +111,7 @@ private:
             size_t child_index = 0;
             child_index = index + num_bins_+ i;
 
-            if (nodes[child_index] == Terminal) {
+            if (nodes[child_index] == Terminal || nodes[child_index] == Filler) {
                 continue; // ignore terminal nodes
             }
 
@@ -136,6 +143,7 @@ private:
     }
 
     constexpr static uint32_t Terminal = 0xFFFFFFFF;
+    static constexpr unsigned Filler = 0xFFFFFFFE; 
     
 
     // helper functions for high order bit 
@@ -163,3 +171,7 @@ private:
     size_t num_bins_;
 };
 
+enum RebuildContext {
+    Insert,
+    Remove
+};

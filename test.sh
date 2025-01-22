@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Simple build and run script for hist-tree
-# you might have to run chmod +x run.sh to make it executable
+# Simple build and test script for hist-tree
+# you might have to run chmod +x test.sh to make it executable
 
 echo "Creating the build directory if it doesn't exist..."
 mkdir -p build

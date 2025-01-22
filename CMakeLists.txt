@@ -9,17 +9,23 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
-#flags for SIMD
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2 -mfma")
+#flags for SIMD and Debugging
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2 -mfma -g -O3 -Wall -Wextra -Wpedantic -Werror")
 
-# GoogleTest integration via FetchContent
+# GoogleTest and GoogleBenchmark integration via FetchContent
 include(FetchContent)
+
 FetchContent_Declare(
   googletest
   URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
 )
 
-FetchContent_MakeAvailable(googletest)
+FetchContent_Declare(
+  googlebenchmark
+  URL https://github.com/google/benchmark/archive/refs/tags/v1.8.2.zip
+)
+
+FetchContent_MakeAvailable(googletest googlebenchmark)
 
 # include directories
 include_directories(include)
@@ -35,7 +41,7 @@ enable_testing()
 
 add_executable(
   builder_test
-  test/builder_test.cpp
+  tests/builder_test.cpp
 )
 
 target_link_libraries(
@@ -45,7 +51,7 @@ target_link_libraries(
 
 add_executable(
   histtree_test
-  test/histtree_test.cpp
+  tests/histtree_test.cpp
 )
 
 target_link_libraries(
@@ -57,4 +63,13 @@ include(GoogleTest)
 gtest_discover_tests(builder_test)
 gtest_discover_tests(histtree_test)
 
+# Benchmarks
+add_executable(
+  histtree_benchmark
+  benchmarks/benchmarkTest.cpp
+)
 
+target_link_libraries(
+  histtree_benchmark
+  benchmark::benchmark
+)

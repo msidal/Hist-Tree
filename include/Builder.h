@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <vector>
 #include <immintrin.h>
 #include <cassert>
@@ -8,6 +7,7 @@
 #include <iostream>
 #include <numeric>
 #include <queue>
+#include <boost/dynamic_bitset.hpp>
 
 #include "HistTree.h"
 
@@ -40,22 +40,20 @@ class Builder {
             
         }
 
-        
-        friend class BuilderTest;
-
         HistTree<KeyType> build() {
-            // subject to change
+            // estimated size of the tree
             size_t estimated_max_depth = static_cast<size_t>(std::ceil(std::log(static_cast<double>(num_keys_) / max_error_) / std::log(num_bins_)));
             size_t estimated_inner_size = ((num_keys_ / max_error_) * (estimated_max_depth + 1) - 1) << (log_num_bins_ + 1);
             size_t estimated_leaf_size = static_cast<size_t>(std::pow(num_bins_, estimated_max_depth)) << log_num_bins_;
 
-            inner_nodes_.resize(estimated_inner_size, 0);
-            leaf_nodes_.resize(estimated_leaf_size, 0);
+            inner_nodes_.resize(estimated_inner_size);
+            leaf_nodes_.resize(estimated_leaf_size);
 
-            auto bit_vector = createBitVector(keys_);
+            //auto bit_vector = createBitVector(keys_);
+            auto bit_vector = createBitVectorSIMD(keys_);
             auto bins = partitionVector(bit_vector); 
             
-            std::queue<std::tuple<std::vector<std::vector<bool>>, size_t, size_t>> to_process;
+            std::queue<std::tuple<std::vector<boost::dynamic_bitset<>>, size_t, size_t>> to_process;
             to_process.push({bins, 0, 0});
 
             size_t next_inner_index = 0;
@@ -91,7 +89,8 @@ class Builder {
                         if (counts[i] < max_error_) {
                             inner_nodes_[current_index + num_bins_ + i] = Terminal;
                         } else {
-                            child_count = countBinElements(partitionVector(bins[i]));
+                            auto child_bins = partitionVector(bins[i]);
+                            child_count = countBinElements(child_bins);
                             //check if the child node is a leaf
                             if (*std::max_element(child_count.begin(), child_count.end()) < max_error_) {
                                 inner_nodes_[current_index + num_bins_ + i] = setHighOrderBit(next_leaf_index);
@@ -101,7 +100,7 @@ class Builder {
                                 next_leaf_index += num_bins_;
                             } else {
                                 inner_nodes_[current_index + num_bins_ + i] = next_inner_index;
-                                to_process.push({partitionVector(bins[i]), next_inner_index, i});
+                                to_process.push({child_bins, next_inner_index, i});
                                 next_inner_index += num_bins_ << 1;
                             }
                         }
@@ -116,25 +115,9 @@ class Builder {
             inner_nodes_.shrink_to_fit();      
             leaf_nodes_.shrink_to_fit();
 
-            return HistTree<KeyType>(min_key_, max_key_, num_keys_, num_bins_, log_num_bins_, max_error_, shift_, range_, inner_nodes_, leaf_nodes_, keys_);
+            return HistTree<KeyType>(min_key_, max_key_, num_keys_, num_bins_, log_num_bins_, max_error_, shift_, range_, inner_nodes_, leaf_nodes_, bit_vector);
         }
 
-        // subject to deletion
-        void printVectors() const {
-            std::cout << "Inner Nodes: ";
-            for (auto node : inner_nodes_) {
-                std::cout << node << " ";
-            }
-            std::cout << std::endl;
-
-            std::cout << "Leaf Nodes: ";
-            for (auto node : leaf_nodes_) {
-                std::cout << node << " ";
-            }
-            std::cout << std::endl;
-        }
-
-        //HistTree<KeyType> recursiveBuild ();
 
     #ifdef TESTING
         public:  
@@ -142,58 +125,53 @@ class Builder {
         private: 
     #endif
         // count set bits in all bins
-        std::vector<uint32_t> countBinElements(const std::vector<std::vector<bool>>& bins) {
+        std::vector<uint32_t> countBinElements(const std::vector<boost::dynamic_bitset<>>& bins) {
             std::vector<uint32_t> counts(num_bins_);
 
             for (size_t i = 0; i < num_bins_; ++i) {
-                counts[i] = std::accumulate(
-                    bins[i].begin(),
-                    bins[i].end(),
-                    0u,  
-                    [](uint32_t acc, bool bit) {
-                        return acc + (bit ? 1 : 0);
-                    }
-                );
+                counts[i] = bins[i].count();
             }
 
             return counts;
         }
 
-        // partition the bit vector into num_bins_ subvectors
-        std::vector<std::vector<bool>> partitionVector(const std::vector<bool>& vector) {
-            size_t bin_size = vector.size() / num_bins_;
-
-            std::vector<std::vector<bool>> result;
+        // partition the bit vector into bins
+        std::vector<boost::dynamic_bitset<>> partitionVector(const boost::dynamic_bitset<>& bitset) {
+            size_t bin_size = bitset.size() / num_bins_;
+            std::vector<boost::dynamic_bitset<>> result;
             size_t start_index = 0;
 
             for (size_t i = 0; i < num_bins_; ++i) {
-                // create the current subvector
-                std::vector<bool> bin(vector.begin() + start_index, vector.begin() + start_index + bin_size);
+                boost::dynamic_bitset<> bin(bin_size);
+
+                for (size_t j = 0; j < bin_size; ++j) {
+                    bin[j] = bitset[start_index + j];
+                }
+
                 result.push_back(bin);
 
-                // update the start index for the next bin
                 start_index += bin_size;
             }
 
             return result;
         }
         
-        // create a bit vector using vector<bool>
-        std::vector<bool> createBitVector(const std::vector<KeyType>& keys) {
-            std::vector<bool> bit_vector(range_, false);
+        // create a bit vector
+        boost::dynamic_bitset<> createBitVector(const std::vector<KeyType>& keys) {
+            boost::dynamic_bitset<> bit_vector(range_);
 
             for (auto key : keys) {
                 int offset = key - min_key_; // map key to an offset in the bit vector
-                bit_vector[offset] = true; 
+                bit_vector.set(offset); 
             }
 
             return bit_vector;
         }
 
         // SIMD-optimized access for uint32_t keys
-        std::vector<bool> createBitVectorSIMD(const std::vector<KeyType>& keys, int min_key, int max_key) {
-            std::vector<bool> bit_vector(range_, false);
-            __m256i min_key_vec = _mm256_set1_epi32(min_key); // load min_key into a SIMD register
+        boost::dynamic_bitset<> createBitVectorSIMD(const std::vector<KeyType>& keys) {
+            boost::dynamic_bitset<> bit_vector(range_);
+            __m256i min_key_vec = _mm256_set1_epi32(min_key_); // load min_key into a SIMD register
             
             for (size_t i = 0; i < keys.size(); i += 8) { // SIMD batch of 8 keys
                 size_t remaining = keys.size() - i;
@@ -211,7 +189,7 @@ class Builder {
 
                 for (size_t j = 0; j < std::min<size_t>(8, remaining); ++j) {
                     if (offsets[j] >= 0 && offsets[j] < static_cast<int>(range_)) {
-                        bit_vector[offsets[j]] = true; // set bit
+                        bit_vector.set(offsets[j]); // set bit
                     }
                 }
             }
@@ -264,3 +242,4 @@ class Builder {
         std::vector<uint32_t> leaf_nodes_;
 
 };
+
