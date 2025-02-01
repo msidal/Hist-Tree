@@ -1,272 +1,83 @@
-Presentation Slides and Final Report
-bool remove(KeyType key) {
-        // check if key is in the current range
-        if (key < min_key_ || key > max_key_) return false;
-        // check if tree is empty or key is not in the tree
-        if (num_keys_ == 0 || std::count(keys_.begin(), keys_.end(), key) == 0) return false;
+TODO:
+- mit copilot beschreibungen zur funktion
+- cleanup / kommentare
+- tests
+- benchmark
+- perf
 
-        // remove key from keys 
-        keys_.erase(std::remove(keys_.begin(), keys_.end(), key), keys_.end());
-        num_keys_--;
+int main() {
+    std::vector<uint32_t> keys;
+    std::random_device rd; // obtain a random number from hardware
+    std::mt19937 gen(rd()); // seed the generator
+    std::uniform_int_distribution<> distr(0, 250); // define the range
 
-        size_t i, bin = 0;
-        key -= min_key_;
+    size_t num_keys = 50;
 
-        // if root is a leaf node
-        if (inner_nodes_.empty()) {
-            bin = key >> shift_;
-            leaf_nodes_[bin]--;
-            return true; 
+    std::cout << "Generating " << num_keys << " random keys..." << std::endl;
+
+    for(size_t n=0; n<num_keys; n++) {
+        //check if the key is already in the vector
+        uint32_t key = distr(gen);
+        if (std::find(keys.begin(), keys.end(), key) != keys.end()) {
+            n--;
+            continue;
         }
-
-        // traverse the tree
-        uint32_t next, *node = inner_nodes_.data();
-        size_t width = shift_;
-        bool root = true, inner = false, leaf = false;
-        uint32_t *parent_child_ptr = nullptr;
-        do {
-            // compute bin
-            bin = key >> width;
-            node[bin]--;
-
-            // if leaf node is reached or the bin is terminal
-            if (leaf || node[num_bins_ + bin] == Terminal) return true;
-            
-            for(i = 0; i < num_bins_; i++) {
-                if (node[i] >= max_error_) {
-                    inner = true;
-                    break;
-                }
-            }
-
-            // if root becomes leaf node
-            if (root && !inner) {
-                for (size_t i = 0; i < num_bins_; i++) {
-                    leaf_nodes_.clear();
-                    leaf_nodes_.resize(leaf_nodes_.size() + num_bins_); //maybe unnecessary
-                    leaf_nodes_[i] = inner_nodes_[i];
-                    inner_nodes_.clear();
-                }
-                return true;
-            }
-
-            if (!root && !inner) {
-                // create new leaf node
-                uint32_t new_leaf_index = leaf_nodes_.size();
-                for(size_t i = 0; i < num_bins_; i++) {
-                    leaf_nodes_.emplace_back(node[i]);
-                }
-        
-                // update parent node
-                new_leaf_index = setHighOrderBit(new_leaf_index);
-                parent_child_ptr[0] = setHighOrderBit(new_leaf_index);
-        
-                // free all children
-                std::queue<uint32_t> to_process;
-                for (size_t i = num_bins_; i < num_bins_ * 2; i++) {
-                    to_process.push(inner_nodes_[num_bins_ + i]);
-                }
-                for (size_t i = 0; i < num_bins_; i++) {
-                    node[i] = Filler;
-                }
-                while(!to_process.empty()) {
-                    auto current = to_process.front();
-                    to_process.pop();
-                    uint32_t *current_ptr = node + current;
-
-                    if (current == Terminal) {
-                        current_ptr[0] = Filler;
-                        continue;
-                    }
-                    
-                    if (isHighOrderBitSet(current)) {
-                        uint32_t leaf_index = clearHighOrderBit(current);
-                        for (size_t i = 0; i < num_bins_; i++) {
-                            leaf_nodes_[leaf_index + i] = Filler;
-                        }
-                        current_ptr[0] = Filler;
-                    } else {
-                        to_process.push(current);
-                        for (size_t i = 0; i < num_bins_ * 2; i++) {
-                            current_ptr[i] = Filler;
-                        }
-                        for (size_t i = 0; i < num_bins_; i++) {
-                            to_process.push(current_ptr[num_bins_ + i]);
-                        }
-                    }
-                }
-                return true;
-            }
-
-            if(node[bin] < max_error_ && inner) {
-                uint32_t leaf_index = clearHighOrderBit(node[num_bins_ + bin]);
-                node[num_bins_ + bin] = Terminal;
-                for (size_t i = 0; i < num_bins_; i++) {
-                    leaf_nodes_[leaf_index + i] = Filler;
-                }
-                return true;
-            }
-
-
-            leaf = isHighOrderBitSet(node[num_bins_ + bin]);
-            next = clearHighOrderBit(node[num_bins_ + bin]);
-            node = leaf ? const_cast<uint32_t*>(leaf_nodes_.data()) + next 
-                        : const_cast<uint32_t*>(inner_nodes_.data()) + next;
-            key -= bin << width;
-            width -= log_num_bins_;
-            root = false;
-            inner = false;
-            parent_child_ptr = node + num_bins_ + bin;
-        } while (1);
+        keys.push_back(key);
     }
 
-    bool isEmpty() const {
-        return num_keys_ == 0;
+    stable_sort(keys.begin(), keys.end());
+
+    std::cout << esc_char << "[1m" << "The Keys: " << esc_char << "[0m";
+    // print the sorted vector
+    for (auto i : keys) {
+        std::cout << i << " ";
+    }   
+    
+    size_t maxerror = 4;
+    size_t num_bins = 4;
+    
+    Builder<uint32_t> builder(keys, num_bins, maxerror);
+
+    auto start = std::chrono::high_resolution_clock::now();
+    HistTree<uint32_t> hist_tree = builder.build();
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    std::cout << std::endl << esc_char << "[1m" << "Time: " << esc_char << "[0m" << duration.count() << " microseconds" << std::endl;
+    
+    hist_tree.printVectors();
+
+    hist_tree.visualize();
+
+    /*
+    std::cout << esc_char << "[1m" << "Input the key you want to search for or quit with q: " << esc_char << "[0m";
+    std::string input;
+    while (std::cin >> input) {
+        if (input == "q") {
+            break;
+        }
+        uint32_t key = std::stoi(input);
+        SearchBound sb = hist_tree.getSearchBound(key);
+        std::cout << esc_char << "[1m" << "Search Bound: " << esc_char << "[0m" << sb.start << " - " << sb.end << std::endl;
+        std::cout << esc_char << "[1m" << "Input the key you want to search for or quit with q: " << esc_char << "[0m";
     }
-
-    void visualize() const {
-        Visualize visualize(inner_nodes_, leaf_nodes_, num_bins_);
-        visualize.exportToGraphviz("hist_tree.dot");
-    };
-
-    void printVectors() const {
-        char esc_char = 27;
-        std::cout << esc_char << "[1m"  << "Inner Nodes: " << esc_char << "[0m";
-        for (const auto& node : inner_nodes_) {
-            std::cout << node << " ";
+    */
+    
+    
+    // same for insert/delete
+    std::cout << esc_char << "[1m" << "Input the key you want to insert or quit with q: " << esc_char << "[0m";
+    std::string input;
+    while (std::cin >> input) {
+        if (input == "q") {
+            break;
         }
-        std::cout << std::endl;
-
-        std::cout << esc_char << "[1m"  << "Leaf Nodes: " << esc_char << "[0m";
-        for (const auto& node : leaf_nodes_) {
-            std::cout << node << " ";
-        }
-        std::cout << std::endl;
+        uint32_t key = std::stoi(input);
+        bool result = hist_tree.insert(key);
+        std::cout << esc_char << "[1m" << "Insert Result: " << esc_char << "[0m" << result << std::endl;
+        hist_tree.visualize();
+        hist_tree.printVectors();
+        std::cout << esc_char << "[1m" << "Input the key you want to insert or quit with q: " << esc_char << "[0m";
     }
-
-
-     std::queue<uint32_t> to_process;
-                for (size_t i = num_bins_; i < num_bins_ * 2; i++) {
-                    to_process.push(inner_nodes_[num_bins_ + i]);
-                }
-                for (size_t i = 0; i < num_bins_; i++) {
-                    node[i] = Filler;
-                }
-                while(!to_process.empty()) {
-                    auto current = to_process.front();
-                    to_process.pop();
-                    uint32_t *current_ptr = node + current;
-
-                    if (current == Terminal) {
-                        current_ptr[0] = Filler;
-                        continue;
-                    }
-                    
-                    if (isHighOrderBitSet(current)) {
-                        uint32_t leaf_index = clearHighOrderBit(current);
-                        for (size_t i = 0; i < num_bins_; i++) {
-                            leaf_nodes_[leaf_index + i] = Filler;
-                        }
-                        current_ptr[0] = Filler;
-                    } else {
-                        to_process.push(current);
-                        for (size_t i = 0; i < num_bins_ * 2; i++) {
-                            current_ptr[i] = Filler;
-                        }
-                        for (size_t i = 0; i < num_bins_; i++) {
-                            to_process.push(current_ptr[num_bins_ + i]);
-                        }
-                    }
-                }
-
-
-
-                // expand the tree
-            if (++node[bin] == max_error_) {
-                if(done) {
-                    // leaf node
-                    // scan bit_vector_ to get the counts
-                    size_t new_width = width - log_num_bins_;
-                    std::vector<size_t> counts(num_bins_, 0);
-                    for (size_t i = 0; i < num_bins_; i++) {
-                        for (size_t j = 0; j < (1 << new_width); j++) {
-                            counts[i] += bit_vector_[bit_vector_index + i * (1 << new_width) + j];
-                        }
-                    }
-
-                    if(*std::max_element(counts.begin(), counts.end()) < max_error_) {
-                        uint32_t new_inner_index = inner_nodes_.size();
-                        for(size_t i = 0; i < num_bins_; i++) {
-                            inner_nodes_.push_back(node[i]);
-                            node[i] = Filler;
-                        }
-
-                        inner_nodes_[parent_index + num_bins_ + parent_bin] = new_inner_index;
-
-                        uint32_t new_leaf_index = leaf_nodes_.size();
-                        for(size_t i = 0; i < num_bins_; i++) {
-                            leaf_nodes_.push_back(counts[i]);
-                        }
-                        for(size_t i = 0; i < num_bins_; i++) {
-                            inner_nodes_.push_back(Terminal);
-                        }
-                        inner_nodes_[new_inner_index + num_bins_ + bin] = setHighOrderBit(new_leaf_index);
-                    } else {
-                        // TODO
-                    }
-                } else {
-                    // inner node
-                    // scan bit_vector_ to get the counts
-                    size_t new_width = width - log_num_bins_;
-                    std::vector<size_t> counts(num_bins_, 0);
-                    for (size_t i = 0; i < num_bins_; i++) {
-                        for (size_t j = 0; j < (1 << new_width); j++) {
-                            counts[i] += bit_vector_[bit_vector_index + i * (1 << new_width) + j];
-                        }
-                    }
-
-                    //print counts
-                    for (size_t i = 0; i < num_bins_; i++) {
-                        std::cout << counts[i] << " ";
-                    }
-
-                    // if max value of counts is less than max_error_ then create a leaf node
-                    if(*std::max_element(counts.begin(), counts.end()) < max_error_) {
-                        // create new leaf node
-                        uint32_t new_leaf_index = leaf_nodes_.size();
-                        for(size_t i = 0; i < num_bins_; i++) {
-                            leaf_nodes_.push_back(counts[i]);
-                        }
-                        
-                        node[num_bins_ + bin] = setHighOrderBit(new_leaf_index);
-                    } else {
-                        // TODO
-                    }
-                }  
-                return true;
-            }
-
-
-// sichere langsame Methoden
-std::vector<KeyType> keys;
-        for (size_t i = 0; i < bit_vector_.size(); ++i) {
-            if (bit_vector_[i]) {
-                keys.push_back(i + min_key_);
-            }
-        }
-        if (context == RebuildContext::Insert) {
-            keys.push_back(key);
-        } else {
-            keys.erase(std::remove(keys.begin(), keys.end(), key), keys.end());
-        }
-
-        std::sort(keys.begin(), keys.end());
-        min_key_ = keys.front();
-        max_key_ = keys.back();
-
-        // update attributes
-        auto log_range_ = computeLog(max_key_ - min_key_, true);
-        shift_ = log_range_ - log_num_bins_;
-        range_ = 1 << log_range_;
-        num_keys_ = bit_vector_.count();
-        bit_vector_ = createBitVector(keys);
+    
+    
+    return 0;
+}

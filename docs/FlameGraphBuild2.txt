@@ -1,0 +1,21 @@
+int main() {
+    std::vector<uint32_t> keys;
+
+    for (size_t i = 0; i < 200000000; ++i) {
+        keys.push_back(i);
+    }   
+    
+    size_t maxerror = 8192;
+    size_t num_bins = 32;
+    
+    Builder<uint32_t> builder(keys, num_bins, maxerror);
+    HistTree<uint32_t> hist_tree = builder.build();
+    
+    return 0;
+}
+
+Also shifts sind für größere datensätze aufgrund der nicht sequentiellen abarbeitung (cache) nicht effizienter
+
+Future hat einen zu großen Overhead
+
+KnapSACKProblem 

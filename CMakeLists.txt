@@ -9,8 +9,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
-#flags for SIMD and Debugging
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2 -mfma -g -O3 -Wall -Wextra -Wpedantic -Werror")
+#flags for optimized build
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp")
+
+# Debugging flags
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2 -mfma -Og -ggdb -fno-omit-frame-pointer")
 
 # GoogleTest and GoogleBenchmark integration via FetchContent
 include(FetchContent)
