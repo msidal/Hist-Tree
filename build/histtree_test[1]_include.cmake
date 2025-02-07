@@ -1,5 +1,0 @@
-if(EXISTS "/home/mert/Hist-Tree/build/histtree_test[1]_tests.cmake")
-  include("/home/mert/Hist-Tree/build/histtree_test[1]_tests.cmake")
-else()
-  add_test(histtree_test_NOT_BUILT histtree_test_NOT_BUILT)
-endif()

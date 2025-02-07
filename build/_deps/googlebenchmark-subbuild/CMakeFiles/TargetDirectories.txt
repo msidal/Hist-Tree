@@ -1,3 +1,0 @@
-/home/mert/Hist-Tree/build/_deps/googlebenchmark-subbuild/CMakeFiles/googlebenchmark-populate.dir
-/home/mert/Hist-Tree/build/_deps/googlebenchmark-subbuild/CMakeFiles/edit_cache.dir
-/home/mert/Hist-Tree/build/_deps/googlebenchmark-subbuild/CMakeFiles/rebuild_cache.dir

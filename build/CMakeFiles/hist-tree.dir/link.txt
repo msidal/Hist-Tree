@@ -1,1 +1,0 @@
-/usr/bin/clang++  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp -g "CMakeFiles/hist-tree.dir/main.cpp.o" -o hist-tree 

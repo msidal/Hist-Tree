@@ -1,2 +1,0 @@
-/usr/bin/llvm-ar qc liboutput_test_helper.a CMakeFiles/output_test_helper.dir/output_test_helper.cc.o
-/usr/bin/llvm-ranlib liboutput_test_helper.a
