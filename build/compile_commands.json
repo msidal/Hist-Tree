@@ -1,0 +1,158 @@
+[
+{
+  "directory": "/home/mert/Hist-Tree/build",
+  "command": "/usr/bin/clang++  -I/home/mert/Hist-Tree/include  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp -g -std=gnu++17 -o CMakeFiles/hist-tree.dir/main.cpp.o -c /home/mert/Hist-Tree/main.cpp",
+  "file": "/home/mert/Hist-Tree/main.cpp",
+  "output": "CMakeFiles/hist-tree.dir/main.cpp.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build",
+  "command": "/usr/bin/clang++  -I/home/mert/Hist-Tree/include -isystem /home/mert/Hist-Tree/build/_deps/googletest-src/googletest/include -isystem /home/mert/Hist-Tree/build/_deps/googletest-src/googletest  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp -g -std=gnu++17 -o CMakeFiles/builder_test.dir/tests/builder_test.cpp.o -c /home/mert/Hist-Tree/tests/builder_test.cpp",
+  "file": "/home/mert/Hist-Tree/tests/builder_test.cpp",
+  "output": "CMakeFiles/builder_test.dir/tests/builder_test.cpp.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build",
+  "command": "/usr/bin/clang++  -I/home/mert/Hist-Tree/include -isystem /home/mert/Hist-Tree/build/_deps/googletest-src/googletest/include -isystem /home/mert/Hist-Tree/build/_deps/googletest-src/googletest  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp -g -std=gnu++17 -o CMakeFiles/histtree_test.dir/tests/histtree_test.cpp.o -c /home/mert/Hist-Tree/tests/histtree_test.cpp",
+  "file": "/home/mert/Hist-Tree/tests/histtree_test.cpp",
+  "output": "CMakeFiles/histtree_test.dir/tests/histtree_test.cpp.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build",
+  "command": "/usr/bin/clang++ -DBENCHMARK_STATIC_DEFINE -I/home/mert/Hist-Tree/include -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/include  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp -g -std=gnu++17 -o CMakeFiles/bench.dir/benchmarks/benchmark.cpp.o -c /home/mert/Hist-Tree/benchmarks/benchmark.cpp",
+  "file": "/home/mert/Hist-Tree/benchmarks/benchmark.cpp",
+  "output": "CMakeFiles/bench.dir/benchmarks/benchmark.cpp.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googletest-build/googletest",
+  "command": "/usr/bin/clang++  -I/home/mert/Hist-Tree/build/_deps/googletest-src/googletest/include -I/home/mert/Hist-Tree/build/_deps/googletest-src/googletest  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp -g -std=c++17 -Wall -Wshadow -Wconversion -DGTEST_HAS_PTHREAD=1 -fexceptions -W -Wpointer-arith -Wreturn-type -Wcast-qual -Wwrite-strings -Wswitch -Wunused-parameter -Wcast-align -Wchar-subscripts -Winline -Wredundant-decls -o CMakeFiles/gtest.dir/src/gtest-all.cc.o -c /home/mert/Hist-Tree/build/_deps/googletest-src/googletest/src/gtest-all.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googletest-src/googletest/src/gtest-all.cc",
+  "output": "_deps/googletest-build/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googletest-build/googletest",
+  "command": "/usr/bin/clang++  -isystem /home/mert/Hist-Tree/build/_deps/googletest-src/googletest/include -isystem /home/mert/Hist-Tree/build/_deps/googletest-src/googletest  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp -g -std=c++17 -Wall -Wshadow -Wconversion -DGTEST_HAS_PTHREAD=1 -fexceptions -W -Wpointer-arith -Wreturn-type -Wcast-qual -Wwrite-strings -Wswitch -Wunused-parameter -Wcast-align -Wchar-subscripts -Winline -Wredundant-decls -o CMakeFiles/gtest_main.dir/src/gtest_main.cc.o -c /home/mert/Hist-Tree/build/_deps/googletest-src/googletest/src/gtest_main.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googletest-src/googletest/src/gtest_main.cc",
+  "output": "_deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-build/src",
+  "command": "/usr/bin/clang++ -DBENCHMARK_HAS_PTHREAD_AFFINITY -DBENCHMARK_STATIC_DEFINE -DHAVE_POSIX_REGEX -DHAVE_PTHREAD_AFFINITY -DHAVE_STD_REGEX -DHAVE_STEADY_CLOCK -DHAVE_THREAD_SAFETY_ATTRIBUTES -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/include -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp  -Wall  -Wextra  -Wshadow  -Wfloat-equal  -Wold-style-cast  -Werror  -Wsuggest-override  -pedantic  -pedantic-errors  -Wshorten-64-to-32  -fstrict-aliasing  -Wno-deprecated-declarations  -Wno-deprecated  -Wstrict-aliasing  -Wthread-safety -g -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/benchmark.dir/benchmark.cc.o -c /home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/benchmark.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/benchmark.cc",
+  "output": "_deps/googlebenchmark-build/src/CMakeFiles/benchmark.dir/benchmark.cc.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-build/src",
+  "command": "/usr/bin/clang++ -DBENCHMARK_HAS_PTHREAD_AFFINITY -DBENCHMARK_STATIC_DEFINE -DHAVE_POSIX_REGEX -DHAVE_PTHREAD_AFFINITY -DHAVE_STD_REGEX -DHAVE_STEADY_CLOCK -DHAVE_THREAD_SAFETY_ATTRIBUTES -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/include -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp  -Wall  -Wextra  -Wshadow  -Wfloat-equal  -Wold-style-cast  -Werror  -Wsuggest-override  -pedantic  -pedantic-errors  -Wshorten-64-to-32  -fstrict-aliasing  -Wno-deprecated-declarations  -Wno-deprecated  -Wstrict-aliasing  -Wthread-safety -g -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/benchmark.dir/benchmark_api_internal.cc.o -c /home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/benchmark_api_internal.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/benchmark_api_internal.cc",
+  "output": "_deps/googlebenchmark-build/src/CMakeFiles/benchmark.dir/benchmark_api_internal.cc.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-build/src",
+  "command": "/usr/bin/clang++ -DBENCHMARK_HAS_PTHREAD_AFFINITY -DBENCHMARK_STATIC_DEFINE -DHAVE_POSIX_REGEX -DHAVE_PTHREAD_AFFINITY -DHAVE_STD_REGEX -DHAVE_STEADY_CLOCK -DHAVE_THREAD_SAFETY_ATTRIBUTES -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/include -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp  -Wall  -Wextra  -Wshadow  -Wfloat-equal  -Wold-style-cast  -Werror  -Wsuggest-override  -pedantic  -pedantic-errors  -Wshorten-64-to-32  -fstrict-aliasing  -Wno-deprecated-declarations  -Wno-deprecated  -Wstrict-aliasing  -Wthread-safety -g -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/benchmark.dir/benchmark_name.cc.o -c /home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/benchmark_name.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/benchmark_name.cc",
+  "output": "_deps/googlebenchmark-build/src/CMakeFiles/benchmark.dir/benchmark_name.cc.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-build/src",
+  "command": "/usr/bin/clang++ -DBENCHMARK_HAS_PTHREAD_AFFINITY -DBENCHMARK_STATIC_DEFINE -DHAVE_POSIX_REGEX -DHAVE_PTHREAD_AFFINITY -DHAVE_STD_REGEX -DHAVE_STEADY_CLOCK -DHAVE_THREAD_SAFETY_ATTRIBUTES -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/include -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp  -Wall  -Wextra  -Wshadow  -Wfloat-equal  -Wold-style-cast  -Werror  -Wsuggest-override  -pedantic  -pedantic-errors  -Wshorten-64-to-32  -fstrict-aliasing  -Wno-deprecated-declarations  -Wno-deprecated  -Wstrict-aliasing  -Wthread-safety -g -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/benchmark.dir/benchmark_register.cc.o -c /home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/benchmark_register.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/benchmark_register.cc",
+  "output": "_deps/googlebenchmark-build/src/CMakeFiles/benchmark.dir/benchmark_register.cc.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-build/src",
+  "command": "/usr/bin/clang++ -DBENCHMARK_HAS_PTHREAD_AFFINITY -DBENCHMARK_STATIC_DEFINE -DHAVE_POSIX_REGEX -DHAVE_PTHREAD_AFFINITY -DHAVE_STD_REGEX -DHAVE_STEADY_CLOCK -DHAVE_THREAD_SAFETY_ATTRIBUTES -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/include -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp  -Wall  -Wextra  -Wshadow  -Wfloat-equal  -Wold-style-cast  -Werror  -Wsuggest-override  -pedantic  -pedantic-errors  -Wshorten-64-to-32  -fstrict-aliasing  -Wno-deprecated-declarations  -Wno-deprecated  -Wstrict-aliasing  -Wthread-safety -g -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/benchmark.dir/benchmark_runner.cc.o -c /home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/benchmark_runner.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/benchmark_runner.cc",
+  "output": "_deps/googlebenchmark-build/src/CMakeFiles/benchmark.dir/benchmark_runner.cc.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-build/src",
+  "command": "/usr/bin/clang++ -DBENCHMARK_HAS_PTHREAD_AFFINITY -DBENCHMARK_STATIC_DEFINE -DHAVE_POSIX_REGEX -DHAVE_PTHREAD_AFFINITY -DHAVE_STD_REGEX -DHAVE_STEADY_CLOCK -DHAVE_THREAD_SAFETY_ATTRIBUTES -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/include -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp  -Wall  -Wextra  -Wshadow  -Wfloat-equal  -Wold-style-cast  -Werror  -Wsuggest-override  -pedantic  -pedantic-errors  -Wshorten-64-to-32  -fstrict-aliasing  -Wno-deprecated-declarations  -Wno-deprecated  -Wstrict-aliasing  -Wthread-safety -g -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/benchmark.dir/check.cc.o -c /home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/check.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/check.cc",
+  "output": "_deps/googlebenchmark-build/src/CMakeFiles/benchmark.dir/check.cc.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-build/src",
+  "command": "/usr/bin/clang++ -DBENCHMARK_HAS_PTHREAD_AFFINITY -DBENCHMARK_STATIC_DEFINE -DHAVE_POSIX_REGEX -DHAVE_PTHREAD_AFFINITY -DHAVE_STD_REGEX -DHAVE_STEADY_CLOCK -DHAVE_THREAD_SAFETY_ATTRIBUTES -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/include -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp  -Wall  -Wextra  -Wshadow  -Wfloat-equal  -Wold-style-cast  -Werror  -Wsuggest-override  -pedantic  -pedantic-errors  -Wshorten-64-to-32  -fstrict-aliasing  -Wno-deprecated-declarations  -Wno-deprecated  -Wstrict-aliasing  -Wthread-safety -g -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/benchmark.dir/colorprint.cc.o -c /home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/colorprint.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/colorprint.cc",
+  "output": "_deps/googlebenchmark-build/src/CMakeFiles/benchmark.dir/colorprint.cc.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-build/src",
+  "command": "/usr/bin/clang++ -DBENCHMARK_HAS_PTHREAD_AFFINITY -DBENCHMARK_STATIC_DEFINE -DHAVE_POSIX_REGEX -DHAVE_PTHREAD_AFFINITY -DHAVE_STD_REGEX -DHAVE_STEADY_CLOCK -DHAVE_THREAD_SAFETY_ATTRIBUTES -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/include -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp  -Wall  -Wextra  -Wshadow  -Wfloat-equal  -Wold-style-cast  -Werror  -Wsuggest-override  -pedantic  -pedantic-errors  -Wshorten-64-to-32  -fstrict-aliasing  -Wno-deprecated-declarations  -Wno-deprecated  -Wstrict-aliasing  -Wthread-safety -g -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/benchmark.dir/commandlineflags.cc.o -c /home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/commandlineflags.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/commandlineflags.cc",
+  "output": "_deps/googlebenchmark-build/src/CMakeFiles/benchmark.dir/commandlineflags.cc.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-build/src",
+  "command": "/usr/bin/clang++ -DBENCHMARK_HAS_PTHREAD_AFFINITY -DBENCHMARK_STATIC_DEFINE -DHAVE_POSIX_REGEX -DHAVE_PTHREAD_AFFINITY -DHAVE_STD_REGEX -DHAVE_STEADY_CLOCK -DHAVE_THREAD_SAFETY_ATTRIBUTES -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/include -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp  -Wall  -Wextra  -Wshadow  -Wfloat-equal  -Wold-style-cast  -Werror  -Wsuggest-override  -pedantic  -pedantic-errors  -Wshorten-64-to-32  -fstrict-aliasing  -Wno-deprecated-declarations  -Wno-deprecated  -Wstrict-aliasing  -Wthread-safety -g -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/benchmark.dir/complexity.cc.o -c /home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/complexity.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/complexity.cc",
+  "output": "_deps/googlebenchmark-build/src/CMakeFiles/benchmark.dir/complexity.cc.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-build/src",
+  "command": "/usr/bin/clang++ -DBENCHMARK_HAS_PTHREAD_AFFINITY -DBENCHMARK_STATIC_DEFINE -DHAVE_POSIX_REGEX -DHAVE_PTHREAD_AFFINITY -DHAVE_STD_REGEX -DHAVE_STEADY_CLOCK -DHAVE_THREAD_SAFETY_ATTRIBUTES -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/include -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp  -Wall  -Wextra  -Wshadow  -Wfloat-equal  -Wold-style-cast  -Werror  -Wsuggest-override  -pedantic  -pedantic-errors  -Wshorten-64-to-32  -fstrict-aliasing  -Wno-deprecated-declarations  -Wno-deprecated  -Wstrict-aliasing  -Wthread-safety -g -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/benchmark.dir/console_reporter.cc.o -c /home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/console_reporter.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/console_reporter.cc",
+  "output": "_deps/googlebenchmark-build/src/CMakeFiles/benchmark.dir/console_reporter.cc.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-build/src",
+  "command": "/usr/bin/clang++ -DBENCHMARK_HAS_PTHREAD_AFFINITY -DBENCHMARK_STATIC_DEFINE -DHAVE_POSIX_REGEX -DHAVE_PTHREAD_AFFINITY -DHAVE_STD_REGEX -DHAVE_STEADY_CLOCK -DHAVE_THREAD_SAFETY_ATTRIBUTES -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/include -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp  -Wall  -Wextra  -Wshadow  -Wfloat-equal  -Wold-style-cast  -Werror  -Wsuggest-override  -pedantic  -pedantic-errors  -Wshorten-64-to-32  -fstrict-aliasing  -Wno-deprecated-declarations  -Wno-deprecated  -Wstrict-aliasing  -Wthread-safety -g -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/benchmark.dir/counter.cc.o -c /home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/counter.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/counter.cc",
+  "output": "_deps/googlebenchmark-build/src/CMakeFiles/benchmark.dir/counter.cc.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-build/src",
+  "command": "/usr/bin/clang++ -DBENCHMARK_HAS_PTHREAD_AFFINITY -DBENCHMARK_STATIC_DEFINE -DHAVE_POSIX_REGEX -DHAVE_PTHREAD_AFFINITY -DHAVE_STD_REGEX -DHAVE_STEADY_CLOCK -DHAVE_THREAD_SAFETY_ATTRIBUTES -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/include -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp  -Wall  -Wextra  -Wshadow  -Wfloat-equal  -Wold-style-cast  -Werror  -Wsuggest-override  -pedantic  -pedantic-errors  -Wshorten-64-to-32  -fstrict-aliasing  -Wno-deprecated-declarations  -Wno-deprecated  -Wstrict-aliasing  -Wthread-safety -g -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/benchmark.dir/csv_reporter.cc.o -c /home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/csv_reporter.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/csv_reporter.cc",
+  "output": "_deps/googlebenchmark-build/src/CMakeFiles/benchmark.dir/csv_reporter.cc.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-build/src",
+  "command": "/usr/bin/clang++ -DBENCHMARK_HAS_PTHREAD_AFFINITY -DBENCHMARK_STATIC_DEFINE -DHAVE_POSIX_REGEX -DHAVE_PTHREAD_AFFINITY -DHAVE_STD_REGEX -DHAVE_STEADY_CLOCK -DHAVE_THREAD_SAFETY_ATTRIBUTES -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/include -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp  -Wall  -Wextra  -Wshadow  -Wfloat-equal  -Wold-style-cast  -Werror  -Wsuggest-override  -pedantic  -pedantic-errors  -Wshorten-64-to-32  -fstrict-aliasing  -Wno-deprecated-declarations  -Wno-deprecated  -Wstrict-aliasing  -Wthread-safety -g -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/benchmark.dir/json_reporter.cc.o -c /home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/json_reporter.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/json_reporter.cc",
+  "output": "_deps/googlebenchmark-build/src/CMakeFiles/benchmark.dir/json_reporter.cc.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-build/src",
+  "command": "/usr/bin/clang++ -DBENCHMARK_HAS_PTHREAD_AFFINITY -DBENCHMARK_STATIC_DEFINE -DHAVE_POSIX_REGEX -DHAVE_PTHREAD_AFFINITY -DHAVE_STD_REGEX -DHAVE_STEADY_CLOCK -DHAVE_THREAD_SAFETY_ATTRIBUTES -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/include -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp  -Wall  -Wextra  -Wshadow  -Wfloat-equal  -Wold-style-cast  -Werror  -Wsuggest-override  -pedantic  -pedantic-errors  -Wshorten-64-to-32  -fstrict-aliasing  -Wno-deprecated-declarations  -Wno-deprecated  -Wstrict-aliasing  -Wthread-safety -g -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/benchmark.dir/perf_counters.cc.o -c /home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/perf_counters.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/perf_counters.cc",
+  "output": "_deps/googlebenchmark-build/src/CMakeFiles/benchmark.dir/perf_counters.cc.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-build/src",
+  "command": "/usr/bin/clang++ -DBENCHMARK_HAS_PTHREAD_AFFINITY -DBENCHMARK_STATIC_DEFINE -DHAVE_POSIX_REGEX -DHAVE_PTHREAD_AFFINITY -DHAVE_STD_REGEX -DHAVE_STEADY_CLOCK -DHAVE_THREAD_SAFETY_ATTRIBUTES -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/include -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp  -Wall  -Wextra  -Wshadow  -Wfloat-equal  -Wold-style-cast  -Werror  -Wsuggest-override  -pedantic  -pedantic-errors  -Wshorten-64-to-32  -fstrict-aliasing  -Wno-deprecated-declarations  -Wno-deprecated  -Wstrict-aliasing  -Wthread-safety -g -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/benchmark.dir/reporter.cc.o -c /home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/reporter.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/reporter.cc",
+  "output": "_deps/googlebenchmark-build/src/CMakeFiles/benchmark.dir/reporter.cc.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-build/src",
+  "command": "/usr/bin/clang++ -DBENCHMARK_HAS_PTHREAD_AFFINITY -DBENCHMARK_STATIC_DEFINE -DHAVE_POSIX_REGEX -DHAVE_PTHREAD_AFFINITY -DHAVE_STD_REGEX -DHAVE_STEADY_CLOCK -DHAVE_THREAD_SAFETY_ATTRIBUTES -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/include -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp  -Wall  -Wextra  -Wshadow  -Wfloat-equal  -Wold-style-cast  -Werror  -Wsuggest-override  -pedantic  -pedantic-errors  -Wshorten-64-to-32  -fstrict-aliasing  -Wno-deprecated-declarations  -Wno-deprecated  -Wstrict-aliasing  -Wthread-safety -g -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/benchmark.dir/statistics.cc.o -c /home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/statistics.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/statistics.cc",
+  "output": "_deps/googlebenchmark-build/src/CMakeFiles/benchmark.dir/statistics.cc.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-build/src",
+  "command": "/usr/bin/clang++ -DBENCHMARK_HAS_PTHREAD_AFFINITY -DBENCHMARK_STATIC_DEFINE -DHAVE_POSIX_REGEX -DHAVE_PTHREAD_AFFINITY -DHAVE_STD_REGEX -DHAVE_STEADY_CLOCK -DHAVE_THREAD_SAFETY_ATTRIBUTES -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/include -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp  -Wall  -Wextra  -Wshadow  -Wfloat-equal  -Wold-style-cast  -Werror  -Wsuggest-override  -pedantic  -pedantic-errors  -Wshorten-64-to-32  -fstrict-aliasing  -Wno-deprecated-declarations  -Wno-deprecated  -Wstrict-aliasing  -Wthread-safety -g -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/benchmark.dir/string_util.cc.o -c /home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/string_util.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/string_util.cc",
+  "output": "_deps/googlebenchmark-build/src/CMakeFiles/benchmark.dir/string_util.cc.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-build/src",
+  "command": "/usr/bin/clang++ -DBENCHMARK_HAS_PTHREAD_AFFINITY -DBENCHMARK_STATIC_DEFINE -DHAVE_POSIX_REGEX -DHAVE_PTHREAD_AFFINITY -DHAVE_STD_REGEX -DHAVE_STEADY_CLOCK -DHAVE_THREAD_SAFETY_ATTRIBUTES -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/include -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp  -Wall  -Wextra  -Wshadow  -Wfloat-equal  -Wold-style-cast  -Werror  -Wsuggest-override  -pedantic  -pedantic-errors  -Wshorten-64-to-32  -fstrict-aliasing  -Wno-deprecated-declarations  -Wno-deprecated  -Wstrict-aliasing  -Wthread-safety -g -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/benchmark.dir/sysinfo.cc.o -c /home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/sysinfo.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/sysinfo.cc",
+  "output": "_deps/googlebenchmark-build/src/CMakeFiles/benchmark.dir/sysinfo.cc.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-build/src",
+  "command": "/usr/bin/clang++ -DBENCHMARK_HAS_PTHREAD_AFFINITY -DBENCHMARK_STATIC_DEFINE -DHAVE_POSIX_REGEX -DHAVE_PTHREAD_AFFINITY -DHAVE_STD_REGEX -DHAVE_STEADY_CLOCK -DHAVE_THREAD_SAFETY_ATTRIBUTES -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/include -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp  -Wall  -Wextra  -Wshadow  -Wfloat-equal  -Wold-style-cast  -Werror  -Wsuggest-override  -pedantic  -pedantic-errors  -Wshorten-64-to-32  -fstrict-aliasing  -Wno-deprecated-declarations  -Wno-deprecated  -Wstrict-aliasing  -Wthread-safety -g -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/benchmark.dir/timers.cc.o -c /home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/timers.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/timers.cc",
+  "output": "_deps/googlebenchmark-build/src/CMakeFiles/benchmark.dir/timers.cc.o"
+},
+{
+  "directory": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-build/src",
+  "command": "/usr/bin/clang++ -DBENCHMARK_STATIC_DEFINE -DHAVE_POSIX_REGEX -DHAVE_PTHREAD_AFFINITY -DHAVE_STD_REGEX -DHAVE_STEADY_CLOCK -DHAVE_THREAD_SAFETY_ATTRIBUTES -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/include -I/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src  -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp=libomp  -Wall  -Wextra  -Wshadow  -Wfloat-equal  -Wold-style-cast  -Werror  -Wsuggest-override  -pedantic  -pedantic-errors  -Wshorten-64-to-32  -fstrict-aliasing  -Wno-deprecated-declarations  -Wno-deprecated  -Wstrict-aliasing  -Wthread-safety -g -std=c++11 -fvisibility=hidden -fvisibility-inlines-hidden -o CMakeFiles/benchmark_main.dir/benchmark_main.cc.o -c /home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/benchmark_main.cc",
+  "file": "/home/mert/Hist-Tree/build/_deps/googlebenchmark-src/src/benchmark_main.cc",
+  "output": "_deps/googlebenchmark-build/src/CMakeFiles/benchmark_main.dir/benchmark_main.cc.o"
+}
+]

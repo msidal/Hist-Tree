@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Site BuildName="(empty)"
+	BuildStamp="20250207-0941-Experimental"
+	Name="(empty)"
+	Generator="ctest-3.28.3"
+	CompilerName=""
+	CompilerVersion=""
+	OSName="Linux"
+	Hostname="mertslinuxsurface"
+	OSRelease="6.8.0-52-generic"
+	OSVersion="#53-Ubuntu SMP PREEMPT_DYNAMIC Sat Jan 11 00:06:25 UTC 2025"
+	OSPlatform="x86_64"
+	Is64Bits="1"
+	VendorString="GenuineIntel"
+	VendorID="Intel Corporation"
+	FamilyID="6"
+	ModelID="142"
+	ProcessorCacheSize="6144"
+	NumberOfLogicalCPU="8"
+	NumberOfPhysicalCPU="4"
+	TotalVirtualMemory="0"
+	TotalPhysicalMemory="7857"
+	LogicalProcessorsPerPhysical="2"
+	ProcessorClockFrequency="1800.05"
+	>
+	<Testing>
+		<StartDateTime>Feb 07 10:58 CET</StartDateTime>
+		<StartTestTime>1738922321</StartTestTime>
+		<TestList/>
+		<EndDateTime>Feb 07 10:58 CET</EndDateTime>
+		<EndTestTime>1738922321</EndTestTime>
+		<ElapsedMinutes>0</ElapsedMinutes>
+	</Testing>
+</Site>

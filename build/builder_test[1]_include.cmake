@@ -1,0 +1,5 @@
+if(EXISTS "/home/mert/Hist-Tree/build/builder_test[1]_tests.cmake")
+  include("/home/mert/Hist-Tree/build/builder_test[1]_tests.cmake")
+else()
+  add_test(builder_test_NOT_BUILT builder_test_NOT_BUILT)
+endif()
