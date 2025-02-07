@@ -1,78 +1,92 @@
-# minimum version of CMake
 cmake_minimum_required(VERSION 3.14)
-
-# projectname and language
 project(Hist-Tree LANGUAGES CXX)
 
-# C++-standard
+# Set architecture for Apple Silicon
+if(APPLE)
+    set(CMAKE_OSX_ARCHITECTURES "arm64")
+endif()
+
+# C++17 requirement
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Check for SIMD support
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag("-mavx2" COMPILER_SUPPORTS_AVX2)
+check_cxx_compiler_flag("-march=armv8-a+simd" COMPILER_SUPPORTS_NEON)
 
-#flags for optimized build
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2 -mfma -O3 -Wall -Wextra -Wpedantic -Werror -fopenmp")
+if(COMPILER_SUPPORTS_AVX2)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2 -mfma")
+elseif(COMPILER_SUPPORTS_NEON)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=armv8-a+simd")
+endif()
 
-# Debugging flags
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2 -mfma -Og -ggdb -fno-omit-frame-pointer")
+# Compiler flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wextra -Wpedantic -Werror")
 
-# GoogleTest and GoogleBenchmark integration via FetchContent
+# OpenMP support
+find_package(OpenMP)
+if(OpenMP_CXX_FOUND)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+endif()
+
+# Configure FetchContent
 include(FetchContent)
+set(FETCHCONTENT_QUIET OFF)
 
+# Special handling for M1 Mac
+if(APPLE)
+    set(FETCHCONTENT_QUIET OFF)
+    set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
+endif()
+
+# Configure GoogleTest
 FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+    googletest
+    URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+    OVERRIDE_FIND_PACKAGE
 )
 
+# Prevent overriding compiler/linker options
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
+set(BUILD_GTEST ON CACHE BOOL "" FORCE)
+
+# Configure Google Benchmark
 FetchContent_Declare(
-  googlebenchmark
-  URL https://github.com/google/benchmark/archive/refs/tags/v1.8.2.zip
+    googlebenchmark
+    URL https://github.com/google/benchmark/archive/refs/tags/v1.8.2.zip
+    OVERRIDE_FIND_PACKAGE
 )
 
+# Disable benchmark tests and Google Test
+set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
+set(BENCHMARK_ENABLE_GTEST_TESTS OFF CACHE BOOL "" FORCE)
+
+# Make dependencies available
 FetchContent_MakeAvailable(googletest googlebenchmark)
 
-# include directories
+# Include directories
 include_directories(include)
 
-# source files if necessary
-# file(GLOB SOURCES src/*.cpp)
+# Main executable
+add_executable(hist-tree main.cpp)
 
-# define executable
-add_executable(hist-tree main.cpp) # ${SOURCES})
-
-# Tests
+# Testing configuration
 enable_testing()
 
-add_executable(
-  builder_test
-  tests/builder_test.cpp
-)
+# Test executables
+add_executable(builder_test tests/builder_test.cpp)
+target_link_libraries(builder_test GTest::gtest_main)
 
-target_link_libraries(
-  builder_test
-  GTest::gtest_main
-)
+add_executable(histtree_test tests/histtree_test.cpp)
+target_link_libraries(histtree_test GTest::gtest_main)
 
-add_executable(
-  histtree_test
-  tests/histtree_test.cpp
-)
-
-target_link_libraries(
-  histtree_test
-  GTest::gtest_main
-)
-
+# Discover tests
 include(GoogleTest)
 gtest_discover_tests(builder_test)
 gtest_discover_tests(histtree_test)
 
-# Benchmarks
-add_executable(
-  histtree_benchmark
-  benchmarks/benchmarkTest.cpp
-)
-
-target_link_libraries(
-  histtree_benchmark
-  benchmark::benchmark
-)
+# Benchmark executable
+add_executable(bench benchmarks/benchmark.cpp)
+target_link_libraries(bench benchmark::benchmark)

@@ -8,6 +8,12 @@
 #include <numeric>
 #include <boost/dynamic_bitset.hpp>
 
+#ifdef __AVX2__
+    #include <immintrin.h>
+#elif defined(__ARM_NEON)
+    #include <arm_neon.h>
+#endif
+
 #include <common.h>
 
 template <typename KeyType>
@@ -254,6 +260,7 @@ public:
         visualize.exportToGraphviz("hist_tree.dot");
     };
 
+    // recommended to use only for debugging or small trees
     void printVectors() const {
         char esc_char = 27;
         std::cout << esc_char << "[1m"  << "Inner Nodes: " << esc_char << "[0m";
@@ -269,12 +276,31 @@ public:
         std::cout << std::endl;
     }
  
+    // Get size in bytes
     size_t getSize() const {
-        return sizeof(*this) + inner_nodes_.size() * sizeof(uint32_t) + leaf_nodes_.size() * sizeof(uint32_t);
+        // Size of the object itself
+        size_t total_size = sizeof(*this);
+        
+        // Size of vector contents
+        total_size += inner_nodes_.size() * sizeof(uint32_t);
+        total_size += leaf_nodes_.size() * sizeof(uint32_t);
+        
+        // Vector capacity overhead
+        total_size += (inner_nodes_.capacity() - inner_nodes_.size()) * sizeof(uint32_t);
+        total_size += (leaf_nodes_.capacity() - leaf_nodes_.size()) * sizeof(uint32_t);
+        
+        // Size of vector objects themselves
+        total_size += 3 * sizeof(void*); // for inner_nodes_
+        total_size += 3 * sizeof(void*); // for leaf_nodes_
+        
+        // Size of boost::dynamic_bitset
+        total_size += (bit_vector_.size() + 63) / 64 * sizeof(uint64_t);
+        total_size += sizeof(size_t);
+        
+        return total_size;
     }
 
-    //TODO remove gaps in the vectors after a remove
-    //remove Filler from the vectors and update pointers (die Anzahl an Filler summieren und dann abziehen von den Pointern)
+    //Future TODO: Implement a function to remove Filler elements from the vectors
     void optimizeSpace() {
         inner_nodes_.shrink_to_fit();
         leaf_nodes_.shrink_to_fit();
@@ -390,31 +416,158 @@ public:
         return bit_vector;
     }
 
-    // TODO to be optimized
+
     void setupRebuild(KeyType key, RebuildContext context) {
         std::vector<KeyType> keys;
-        for (size_t i = 0; i < bit_vector_.size(); ++i) {
-            if (bit_vector_[i]) {
-                keys.push_back(i + min_key_);
-            }
-        }
-        if (context == RebuildContext::Insert) {
-            keys.push_back(key);
-        } else {
-            keys.erase(std::remove(keys.begin(), keys.end(), key), keys.end());
+        keys.reserve(bit_vector_.count());
+        for (size_t i = bit_vector_.find_first(); 
+            i != boost::dynamic_bitset<>::npos;
+            i = bit_vector_.find_next(i)) {
+            keys.push_back(i + min_key_);
         }
 
-        std::sort(keys.begin(), keys.end());
+        if (context == RebuildContext::Insert) {
+            keys.push_back(key);
+            std::sort(keys.begin(), keys.end());
+        } else {
+            if (key == min_key_) {
+                keys.erase(keys.begin());
+            } else  {
+                keys.pop_back();
+            } 
+        }
+
+        //update the tree parameters
         min_key_ = keys.front();
         max_key_ = keys.back();
 
-        // update attributes
         auto log_range_ = computeLog(max_key_ - min_key_, true);
         shift_ = log_range_ - log_num_bins_;
         range_ = 1 << log_range_;
+        bit_vector_ = createBitVectorSIMD(keys);
         num_keys_ = bit_vector_.count();
-        bit_vector_ = createBitVector(keys);
     }
+
+    std::vector<boost::dynamic_bitset<>> partitionVectorSIMD(const boost::dynamic_bitset<>& bitset) {
+        const size_t bin_size = bitset.size() / num_bins_;
+        std::vector<boost::dynamic_bitset<>> bins(num_bins_, boost::dynamic_bitset<>(bin_size));
+
+        #if defined(__AVX2__) || defined(__ARM_NEON)
+            #ifdef __AVX2__
+                constexpr size_t simd_width = 256;
+            #else
+                constexpr size_t simd_width = 128;
+            #endif
+            constexpr size_t simd_bytes = simd_width / 8;
+            const size_t L1_cache_size = 32768;
+            const size_t chunk_size = (L1_cache_size / simd_bytes) * simd_width;
+
+            #pragma omp parallel
+            {
+                alignas(32) unsigned char simd_buffer[simd_bytes];
+                
+                #pragma omp for schedule(dynamic)
+                for (size_t bin = 0; bin < num_bins_; ++bin) {
+                    const size_t offset = bin * bin_size;
+                    
+                    for (size_t chunk_start = 0; chunk_start < bin_size; chunk_start += chunk_size) {
+                        const size_t current_chunk = std::min(chunk_size, bin_size - chunk_start);
+                        
+                        for (size_t i = 0; i < current_chunk; i += simd_width) {
+                            const size_t bits_to_process = std::min(simd_width, current_chunk - i);
+                            const size_t pos = offset + chunk_start + i;
+                            
+                            #ifdef __AVX2__
+                                __m256i bits = _mm256_setzero_si256();
+                                for (size_t j = 0; j < bits_to_process; j += 8) {
+                                    unsigned char byte = 0;
+                                    for (size_t k = 0; k < 8 && (j + k) < bits_to_process; ++k) {
+                                        byte |= (bitset[pos + j + k] ? 1 : 0) << k;
+                                    }
+                                    simd_buffer[j/8] = byte;
+                                }
+                                bits = _mm256_load_si256(reinterpret_cast<const __m256i*>(simd_buffer));
+                                _mm256_store_si256(reinterpret_cast<__m256i*>(simd_buffer), bits);
+                            #elif defined(__ARM_NEON)
+                                uint8x16_t bits = vdupq_n_u8(0);
+                                for (size_t j = 0; j < bits_to_process; j += 8) {
+                                    uint8_t byte = 0;
+                                    for (size_t k = 0; k < 8 && (j + k) < bits_to_process; ++k) {
+                                        byte |= (bitset[pos + j + k] ? 1 : 0) << k;
+                                    }
+                                    simd_buffer[j/8] = byte;
+                                }
+                                bits = vld1q_u8(simd_buffer);
+                                vst1q_u8(simd_buffer, bits);
+                            #endif
+
+                            for (size_t j = 0; j < bits_to_process; ++j) {
+                                bins[bin][chunk_start + i + j] = (simd_buffer[j/8] >> (j%8)) & 1;
+                            }
+                        }
+                    }
+                }
+            }
+        #else
+            return partitionVector(bitset);
+        #endif
+        
+        return bins;
+    }
+
+    boost::dynamic_bitset<> createBitVectorSIMD(const std::vector<KeyType>& keys) {
+            boost::dynamic_bitset<> bit_vector(range_);
+            
+            #ifdef __AVX2__
+                __m256i min_key_vec = _mm256_set1_epi32(min_key_);
+                for (size_t i = 0; i < keys.size(); i += 8) {
+                    size_t remaining = keys.size() - i;
+                    int temp_keys[8] = {0};
+
+                    for (size_t j = 0; j < std::min<size_t>(8, remaining); ++j) {
+                        temp_keys[j] = keys[i + j];
+                    }
+
+                    __m256i key_vec = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(temp_keys));
+                    __m256i offset_vec = _mm256_sub_epi32(key_vec, min_key_vec);
+
+                    alignas(32) int offsets[8];
+                    _mm256_store_si256(reinterpret_cast<__m256i*>(offsets), offset_vec);
+
+                    for (size_t j = 0; j < std::min<size_t>(8, remaining); ++j) {
+                        if (offsets[j] >= 0 && offsets[j] < static_cast<int>(range_)) {
+                            bit_vector.set(offsets[j]);
+                        }
+                    }
+                }
+            #elif defined(__ARM_NEON)
+                int32x4_t min_key_vec = vdupq_n_s32(min_key_);
+                for (size_t i = 0; i < keys.size(); i += 4) {
+                    size_t remaining = keys.size() - i;
+                    int temp_keys[4] = {0};
+
+                    for (size_t j = 0; j < std::min<size_t>(4, remaining); ++j) {
+                        temp_keys[j] = keys[i + j];
+                    }
+
+                    int32x4_t key_vec = vld1q_s32(temp_keys);
+                    int32x4_t offset_vec = vsubq_s32(key_vec, min_key_vec);
+
+                    int offsets[4];
+                    vst1q_s32(offsets, offset_vec);
+
+                    for (size_t j = 0; j < std::min<size_t>(4, remaining); ++j) {
+                        if (offsets[j] >= 0 && offsets[j] < static_cast<int>(range_)) {
+                            bit_vector.set(offsets[j]);
+                        }
+                    }
+                }
+            #else
+                return createBitVector(keys);
+            #endif
+
+            return bit_vector;
+        }
 
     void rebuild(KeyType key, RebuildContext context) {
         setupRebuild(key, context);
@@ -429,7 +582,7 @@ public:
         leaf_nodes_.resize(estimated_leaf_size);
 
         auto bit_vector = bit_vector_;
-        auto bins = partitionVector(bit_vector); 
+        auto bins = partitionVectorSIMD(bit_vector); 
         
         std::queue<std::tuple<std::vector<boost::dynamic_bitset<>>, size_t, size_t>> to_process;
         to_process.push({bins, 0, 0});
@@ -467,7 +620,7 @@ public:
                     if (counts[i] < max_error_) {
                         inner_nodes_[current_index + num_bins_ + i] = Terminal;
                     } else {
-                        auto child_bins = partitionVector(bins[i]);
+                        auto child_bins = partitionVectorSIMD(bins[i]);
                         child_count = countBinElements(child_bins);
                         //check if the child node is a leaf
                         if (*std::max_element(child_count.begin(), child_count.end()) < max_error_) {

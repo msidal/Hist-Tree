@@ -87,7 +87,8 @@ public:
         out.close();
         std::cout << "Graphviz file has been created." << filePath << std::endl;
         std::string command = "dot -Tpng " + filePath.string() + " -o " + folderPath.string() + "/" + replaceDotWithPng(filename);
-        system(command.c_str());
+        auto success = system(command.c_str());
+        (void)success;
         filePath.replace_extension(".png");
         std::cout << "Graphviz file has been converted to PNG in folder 'graphs'." << filePath << std::endl;
     }
