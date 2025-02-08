@@ -12,7 +12,7 @@
 #include <queue>
 #include <vector>
 
-#ifdef __AVX2__
+#ifdef USE_AVX2
 #include <immintrin.h>
 #endif
 
@@ -238,7 +238,7 @@ private:
         std::vector<boost::dynamic_bitset<>> bins(
             num_bins_, boost::dynamic_bitset<>(bin_size));
 
-#ifdef __AVX2__
+#ifdef USE_AVX2
         // SIMD parameters
         constexpr size_t simd_width = 256;
         constexpr size_t simd_bytes = simd_width / 8;
@@ -338,7 +338,7 @@ private:
     {
         boost::dynamic_bitset<> bit_vector(range_);
 
-#ifdef __AVX2__
+#ifdef USE_AVX2
         // Broadcast the minimum key
         __m256i min_key_vec = _mm256_set1_epi32(min_key_);
 

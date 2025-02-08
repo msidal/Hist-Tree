@@ -35,7 +35,7 @@ Clone and run:
 
 ```bash
 git clone https://github.com/msidal/hist-tree.git
-cd hist-tree
+cd Hist-Tree
 chmod +x run.sh test.sh bench.sh
 ./run.sh
 ```

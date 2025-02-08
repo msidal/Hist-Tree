@@ -5,11 +5,30 @@ project(Hist-Tree LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Check for AVX2 support
-include(CheckCXXCompilerFlag)
-check_cxx_compiler_flag("-mavx2" COMPILER_SUPPORTS_AVX2)
-if(COMPILER_SUPPORTS_AVX2)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2 -mfma")
+include(CheckCXXSourceRuns)
+
+# Test code checking if AVX2 is available
+set(AVX2_TEST_SOURCE "
+#include <immintrin.h>
+int main() {
+    __m256i a = _mm256_set1_epi32(1);
+    __m256i b = _mm256_set1_epi32(2);
+    __m256i c = _mm256_add_epi32(a, b);
+    return _mm256_extract_epi32(c, 0) == 3 ? 0 : 1;
+}
+")
+
+# temporary AVX2 flag
+set(CMAKE_REQUIRED_FLAGS "-mavx2")
+check_cxx_source_runs("${AVX2_TEST_SOURCE}" AVX2_SUPPORTED)
+set(CMAKE_REQUIRED_FLAGS "")
+
+# Set AVX2 flag if test succeeded
+if(AVX2_SUPPORTED)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2")
+    add_definitions(-DUSE_AVX2)
+else()
+    add_definitions(-DNO_AVX2)
 endif()
 
 # Compiler flags

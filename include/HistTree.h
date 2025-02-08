@@ -8,7 +8,7 @@
 #include <numeric>
 #include <vector>
 
-#ifdef __AVX2__
+#ifdef USE_AVX2
 #include <immintrin.h>
 #endif
 
@@ -185,6 +185,7 @@ public:
             // Expand the tree
             if (++node[bin] == max_error_)
             {
+                // could be optimized by "expanding in-place" but would use same algorithm as build
                 rebuild(key + min_key_, RebuildContext::Insert);
                 return true;
             }
@@ -631,7 +632,7 @@ private:
         std::vector<boost::dynamic_bitset<>> bins(
             num_bins_, boost::dynamic_bitset<>(bin_size));
 
-#ifdef __AVX2__
+#ifdef USE_AVX2
         constexpr size_t simd_width = 256;
         constexpr size_t simd_bytes = simd_width / 8;
         const size_t L1_cache_size = 32768;
@@ -700,7 +701,7 @@ private:
     {
         boost::dynamic_bitset<> bit_vector(range_);
 
-#ifdef __AVX2__
+#ifdef USE_AVX2
         __m256i min_key_vec = _mm256_set1_epi32(min_key_);
         for (size_t i = 0; i < keys.size(); i += 8)
         {
@@ -739,7 +740,7 @@ private:
      *
      * @param key The key to rebuild around.
      * @param context The context of the rebuild (insert or remove).
-     * @details Same as Builder::build(). Could maybe be optimized to partially rebuild the tree.
+     * @details Same as Builder::build(). It is needed when the range changes. Could maybe be optimized to partially rebuild the tree.
      */
     void rebuild(KeyType key, RebuildContext context)
     {
