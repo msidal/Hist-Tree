@@ -4,7 +4,7 @@
 // OpenMP for parallelism
 #include "omp.h"
 // faster than std::vector<bool> and more dynamic than std::bitset
-#include <boost/dynamic_bitset.hpp> 
+#include <boost/dynamic_bitset.hpp>
 #include <cassert>
 #include <cmath>
 #include <iostream>
@@ -122,10 +122,10 @@ public:
                 {
                     inner_nodes_[current_index + i] = counts[i];
                 }
-        
+
                 if (current_index == 0)
                     next_inner_index = num_bins_ << 1;
-                
+
                 // Process each bin
                 for (size_t i = 0; i < num_bins_; ++i)
                 {
@@ -190,7 +190,7 @@ private:
         std::vector<uint32_t> counts(num_bins_);
         for (size_t i = 0; i < num_bins_; ++i)
         {
-            counts[i] = bins[i].count(); 
+            counts[i] = bins[i].count();
         }
         return counts;
     }
@@ -270,7 +270,7 @@ private:
                         const size_t pos = offset + chunk_start + i;
 
                         // Initialize the SIMD buffer
-                        __m256i bits = _mm256_setzero_si256(); 
+                        __m256i bits = _mm256_setzero_si256();
 
                         // Put respectively 8 bits into the SIMD buffer
                         for (size_t j = 0; j < bits_to_process; j += 8)
@@ -439,18 +439,18 @@ private:
 
     static constexpr unsigned Terminal = 0xFFFFFFFF; ///< Terminal value for inner nodes.
 
-    KeyType min_key_; ///< Minimum key.
-    KeyType max_key_; ///< Maximum key.
-    const size_t num_bins_; ///< Number of bins.
+    KeyType min_key_;           ///< Minimum key.
+    KeyType max_key_;           ///< Maximum key.
+    const size_t num_bins_;     ///< Number of bins.
     const size_t log_num_bins_; ///< Logarithm of the number of bins.
-    const size_t max_error_; ///< Maximum allowable error.
-    size_t range_; ///< Range of the keys.
-    size_t num_keys_; ///< Number of keys.
-    size_t shift_; ///< Shift value.
+    const size_t max_error_;    ///< Maximum allowable error.
+    size_t range_;              ///< Range of the keys.
+    size_t num_keys_;           ///< Number of keys.
+    size_t shift_;              ///< Shift value.
 
     std::vector<KeyType> keys_; ///< Vector of keys.
 
     // physical representation of the tree
     std::vector<uint32_t> inner_nodes_; ///< Inner nodes.
-    std::vector<uint32_t> leaf_nodes_; ///< Leaf nodes.
+    std::vector<uint32_t> leaf_nodes_;  ///< Leaf nodes.
 };

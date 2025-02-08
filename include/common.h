@@ -182,8 +182,7 @@ private:
                 out << "  node" << index << " -> leaf_" << leaf_index << " [label=\""
                     << i << "\"];\n";
                 exportLeafNode(out, leaf_index);
-                
-            }
+                        }
             else
             {
                 // Inner node

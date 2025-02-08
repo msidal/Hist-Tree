@@ -108,7 +108,7 @@ TEST_F(HistTreeTest, GetSearchBoundExistingKey)
         bool found = false;
         for (size_t i = bound.start; i < bound.end; ++i)
         {
-            if(normal_keys[i] == key)
+            if (normal_keys[i] == key)
             {
                 found = true;
                 break;
