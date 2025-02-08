@@ -14,10 +14,19 @@ Hist-Tree [[1]](#1) is an efficient index competing with state-of-the-art Learne
 
 ## Requirements
 
-Optional dependency for tree visualization:
-
 ```bash
-sudo apt install graphviz
+# Essential build tools
+sudo apt-get install build-essential
+sudo apt-get install cmake
+
+# Boost library (required for boost::dynamic_bitset)
+sudo apt-get install libboost-all-dev
+
+# OpenMP for parallelization
+sudo apt-get install libomp-dev
+
+# Optional: Graphviz for visualization (.dot files)
+sudo apt-get install graphviz
 ```
 
 ## Setup & Usage
@@ -61,7 +70,3 @@ tree.remove(1);
 Andrew Crotty (2021).
 Hist-Tree: Those Who Ignore It Are Doomed to Learn.
 Conference on Innovative Data Systems Research. [Paper](https://api.semanticscholar.org/CorpusID:231400989)
-
-## License
-
-MIT License

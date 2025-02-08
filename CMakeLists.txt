@@ -1,24 +1,15 @@
 cmake_minimum_required(VERSION 3.14)
 project(Hist-Tree LANGUAGES CXX)
 
-# Set architecture for Apple Silicon
-if(APPLE)
-    set(CMAKE_OSX_ARCHITECTURES "arm64")
-endif()
-
 # C++17 requirement
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Check for SIMD support
+# Check for AVX2 support
 include(CheckCXXCompilerFlag)
 check_cxx_compiler_flag("-mavx2" COMPILER_SUPPORTS_AVX2)
-check_cxx_compiler_flag("-march=armv8-a+simd" COMPILER_SUPPORTS_NEON)
-
 if(COMPILER_SUPPORTS_AVX2)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2 -mfma")
-elseif(COMPILER_SUPPORTS_NEON)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=armv8-a+simd")
 endif()
 
 # Compiler flags
@@ -32,13 +23,6 @@ endif()
 
 # Configure FetchContent
 include(FetchContent)
-set(FETCHCONTENT_QUIET OFF)
-
-# Special handling for M1 Mac
-if(APPLE)
-    set(FETCHCONTENT_QUIET OFF)
-    set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
-endif()
 
 # Configure GoogleTest
 FetchContent_Declare(
@@ -47,21 +31,12 @@ FetchContent_Declare(
     OVERRIDE_FIND_PACKAGE
 )
 
-# Prevent overriding compiler/linker options
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
-set(BUILD_GTEST ON CACHE BOOL "" FORCE)
-
 # Configure Google Benchmark
 FetchContent_Declare(
     googlebenchmark
     URL https://github.com/google/benchmark/archive/refs/tags/v1.8.2.zip
     OVERRIDE_FIND_PACKAGE
 )
-
-# Disable benchmark tests and Google Test
-set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
-set(BENCHMARK_ENABLE_GTEST_TESTS OFF CACHE BOOL "" FORCE)
 
 # Make dependencies available
 FetchContent_MakeAvailable(googletest googlebenchmark)
